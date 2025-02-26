@@ -14,14 +14,11 @@ body {
   line-height: 1.6;
   padding: 1rem;
 }
+
 /* Room Selection */
 .room-selection {
   margin-bottom: 1.5rem;
   text-align: center;
-}
-.room-selection label {
-  margin-right: 0.5rem;
-  font-weight: 600;
 }
 .room-selection select {
   padding: 0.5rem 1rem;
@@ -29,9 +26,9 @@ body {
   border: 1px solid #333;
   background-color: #262626;
   color: #e0e0e0;
-  outline: none;
   font-size: 1rem;
 }
+
 /* Container Layout */
 .container {
   display: flex;
@@ -47,7 +44,6 @@ body {
   border-radius: 8px;
   overflow: hidden;
 }
-/* Base Image */
 #baseImage {
   display: block;
   width: 100%;
@@ -55,7 +51,8 @@ body {
   position: relative;
   z-index: 1;
 }
-/* Overlays */
+
+/* Overlay (created on demand) */
 .color-overlay {
   position: absolute;
   top: 0;
@@ -67,6 +64,7 @@ body {
   transition: opacity 0.3s ease;
   mix-blend-mode: multiply;
 }
+
 /* Color Selection Panel */
 .color-selection {
   max-width: 300px;
@@ -82,6 +80,30 @@ body {
   font-size: 1.25rem;
   color: #ff7043; /* coral accent */
 }
+
+/* Category Navigation */
+.color-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+.category-button {
+  background: #333;
+  color: #e0e0e0;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.category-button.active,
+.category-button:hover {
+  background-color: #ff7043;
+}
+
+/* Color Options (buttons for individual colors) */
 .color-options {
   display: flex;
   flex-wrap: wrap;
@@ -106,8 +128,10 @@ body {
 }
 .color-button.active {
   transform: scale(1.15);
-  box-shadow: 0 0 8px rgba(38, 166, 154, 0.8); /* teal accent */
+  box-shadow: 0 0 8px rgba(38, 166, 154, 0.8);
 }
+
+/* Reset Button */
 .reset-button {
   background-color: #333;
   border: none;
@@ -123,6 +147,7 @@ body {
 .reset-button:hover {
   background-color: #444;
 }
+
 /* Responsive Breakpoints */
 @media (max-width: 576px) {
   html {
@@ -163,9 +188,7 @@ body {
   }
 }
 @media (max-width: 1440px) {
-  .visualization-area {
-    max-width: 1200px;
-  }
+  .visualization-area,
   .color-selection {
     max-width: 1200px;
   }

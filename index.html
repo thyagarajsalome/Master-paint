@@ -7,12 +7,9 @@
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <!-- Room selection option -->
+    <!-- Room selection -->
     <div class="room-selection">
-      <select id="roomSelect">
-        <option value="kitchen">Kitchen</option>
-        <option value="livingroom">Living Room</option>
-      </select>
+      <select id="roomSelect"></select>
     </div>
 
     <div class="container">
@@ -21,18 +18,21 @@
         <img src="" alt="Base" id="baseImage" />
       </div>
 
-      <!-- Color Selection Area -->
+      <!-- Color Selection Panel -->
       <div class="color-selection">
         <h4>Paint Color</h4>
-        <div class="color-options">
-          <!-- Color buttons are generated dynamically -->
+        <!-- Category Navigation -->
+        <div class="color-categories">
+          <!-- Category buttons will be injected by JS -->
         </div>
+        <!-- Color buttons will be injected here based on the selected category -->
+        <div class="color-options"></div>
         <button class="reset-button" id="resetButton">Reset</button>
       </div>
     </div>
 
-    <!-- Include colors (data) and app (logic) scripts -->
-    <script src="colors.js"></script>
-    <script src="app.js"></script>
+    <!-- Colors data and application logic -->
+    <script src="./colors.js"></script>
+    <script src="./app.js"></script>
   </body>
 </html>
