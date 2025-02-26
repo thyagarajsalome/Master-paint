@@ -1,34 +1,34 @@
 document.addEventListener("DOMContentLoaded", () => {
   // Configuration for each room/visualizer category
   const visualizerConfigs = {
-    kitchen: {
-      baseImage: "./images-kitchen/base.jpg",
-      overlayPath: "./images-kitchen/",
-    },
+    // kitchen: {
+    //   baseImage: "./images-kitchen/base.jpg",
+    //   overlayPath: "./images-kitchen/",
+    // },
     livingroom: {
       baseImage: "./images-livingroom/base.jpg",
       overlayPath: "./images-livingroom/",
     },
-    bedroom: {
-      baseImage: "./images-bedroom/base.jpg",
-      overlayPath: "./images-bedroom/",
-    },
-    bathroom: {
-      baseImage: "./images-bathroom/base.jpg",
-      overlayPath: "./images-bathroom/",
-    },
-    furniture: {
-      baseImage: "./images-furniture/base.jpg",
-      overlayPath: "./images-furniture/",
-    },
-    exterior: {
-      baseImage: "./images-exterior/base.jpg",
-      overlayPath: "./images-exterior/",
-    },
-    patio: {
-      baseImage: "./images-patio/base.jpg",
-      overlayPath: "./images-patio/",
-    },
+    // bedroom: {
+    //   baseImage: "./images-bedroom/base.jpg",
+    //   overlayPath: "./images-bedroom/",
+    // },
+    // bathroom: {
+    //   baseImage: "./images-bathroom/base.jpg",
+    //   overlayPath: "./images-bathroom/",
+    // },
+    // furniture: {
+    //   baseImage: "./images-furniture/base.jpg",
+    //   overlayPath: "./images-furniture/",
+    // },
+    // exterior: {
+    //   baseImage: "./images-exterior/base.jpg",
+    //   overlayPath: "./images-exterior/",
+    // },
+    // patio: {
+    //   baseImage: "./images-patio/base.jpg",
+    //   overlayPath: "./images-patio/",
+    // },
   };
 
   // DOM elements
@@ -38,22 +38,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const colorOptionsContainer = document.querySelector(".color-options");
   const resetButton = document.getElementById("resetButton");
 
+  // Mobile navigation elements
+  const mobileMenuIcon = document.getElementById("mobileMenuIcon");
+  const colorCategoriesContainer = document.getElementById(
+    "colorCategoriesContainer"
+  );
+
   // Global variables
   let currentColor = null;
   let currentConfig = null;
   let overlays = {}; // to hold overlay image elements
-
-  // Build a room select dropdown from visualizerConfigs
-  function populateRoomSelect() {
-    roomSelect.innerHTML = "";
-    Object.keys(visualizerConfigs).forEach((key) => {
-      const option = document.createElement("option");
-      option.value = key;
-      option.textContent =
-        key.charAt(0).toUpperCase() + key.slice(1).toLowerCase();
-      roomSelect.appendChild(option);
-    });
-  }
 
   /* Helper: Convert "rgb(r, g, b)" string to an HSL object */
   function rgbToHsl(r, g, b) {
@@ -86,6 +80,17 @@ document.addEventListener("DOMContentLoaded", () => {
     return { h, s, l };
   }
 
+  /* Helper: Convert "rgb(r, g, b)" to Hex string */
+  function rgbStringToHex(rgbStr) {
+    const regex = /rgb\(\s*(\d+),\s*(\d+),\s*(\d+)\s*\)/;
+    const result = regex.exec(rgbStr);
+    if (!result) return "#000000";
+    const r = parseInt(result[1]).toString(16).padStart(2, "0");
+    const g = parseInt(result[2]).toString(16).padStart(2, "0");
+    const b = parseInt(result[3]).toString(16).padStart(2, "0");
+    return `#${r}${g}${b}`;
+  }
+
   /* Determine a category for a given RGB string.
      Categories: "Red", "Brown", "Orange", "Yellow", "Green", "Blue", "Purple", "Neutral" */
   function getColorCategory(rgbStr) {
@@ -96,7 +101,6 @@ document.addEventListener("DOMContentLoaded", () => {
       g = parseInt(result[2]),
       b = parseInt(result[3]);
     const { h, s, l } = rgbToHsl(r, g, b);
-    // If very low saturation or very dark/light, assign to Neutral
     if (s < 0.25 || l < 0.2 || l > 0.8) {
       return "Neutral";
     }
@@ -146,14 +150,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* Render category buttons (one for each of the eight groups) */
   function renderCategoryButtons(colorCategories) {
-    const container = document.querySelector(".color-categories");
-    container.innerHTML = "";
+    // Clear the container and add a mobile close icon (for mobile view)
+    colorCategoriesContainer.innerHTML =
+      '<span class="mobile-close-icon" id="mobileCloseIcon">&times; Close</span>';
     Object.keys(colorCategories).forEach((category) => {
       const btn = document.createElement("button");
       btn.className = "category-button";
       btn.dataset.category = category;
       btn.textContent = category;
-      container.appendChild(btn);
+      colorCategoriesContainer.appendChild(btn);
+    });
+    // Reattach mobile close event (in case of mobile overlay)
+    const mobileCloseIconNew = document.getElementById("mobileCloseIcon");
+    mobileCloseIconNew.addEventListener("click", () => {
+      colorCategoriesContainer.classList.remove("active");
     });
   }
 
@@ -174,13 +184,16 @@ document.addEventListener("DOMContentLoaded", () => {
       colorItem.appendChild(button);
       colorOptionsContainer.appendChild(colorItem);
 
+      // Always select the color on click; do not toggle it off
       button.addEventListener("click", () => {
-        selectColor(currentColor === key ? null : key);
+        if (currentColor !== key) {
+          selectColor(key);
+        }
       });
     });
   }
 
-  /* Set up event listeners on the category buttons */
+  /* Setup event listeners on the category buttons */
   function setupCategoryButtonListeners(colorCategories) {
     const buttons = document.querySelectorAll(".category-button");
     buttons.forEach((btn) => {
@@ -192,39 +205,58 @@ document.addEventListener("DOMContentLoaded", () => {
         renderColorButtons(category, colorCategories);
         // Reset any overlay
         selectColor(null);
+        // Close mobile menu if active
+        if (colorCategoriesContainer.classList.contains("active")) {
+          colorCategoriesContainer.classList.remove("active");
+        }
       });
     });
   }
 
-  /* Initialize the visualizer:
-     – Remove any old overlays and reset the color selection.
-     – Set the base image for the chosen room.
-     – Render the color buttons for a default category (here "Red"). */
-  function initializeVisualizer(config) {
-    // Remove existing overlays
-    Object.values(overlays).forEach((overlay) => overlay.remove());
-    overlays = {};
-    currentColor = null;
-    baseImage.src = config.baseImage;
+  /* Update color details in the preview panel */
+  function updateColorDetails(colorId) {
+    const colorRGBEl = document.getElementById("colorRGB");
+    const colorHexEl = document.getElementById("colorHex");
+    const colorCategoryEl = document.getElementById("colorCategory");
+    const colorRoomEl = document.getElementById("colorRoom");
+    const colorFinishDisplayEl = document.getElementById("colorFinishDisplay");
 
-    // Set default category button active (e.g., "Red")
-    const defaultCategory = "Red";
-    const catButtons = document.querySelectorAll(".category-button");
-    catButtons.forEach((btn) => {
-      btn.classList.toggle("active", btn.dataset.category === defaultCategory);
-    });
-    renderColorButtons(defaultCategory, colorCategories);
+    if (colorId) {
+      const rgbValue = colors[colorId];
+      const hexValue = rgbStringToHex(rgbValue);
+      const category = getColorCategory(rgbValue);
+      const room =
+        roomSelect.value.charAt(0).toUpperCase() + roomSelect.value.slice(1);
+      const finish = document.getElementById("finishSelect").value;
+
+      colorRGBEl.textContent = `RGB: ${rgbValue}`;
+      colorHexEl.textContent = `Hex: ${hexValue}`;
+      colorCategoryEl.textContent = `Color Category: ${category}`;
+      colorRoomEl.textContent = `Room: ${room}`;
+      colorFinishDisplayEl.textContent = `Finish: ${finish}`;
+    } else {
+      colorRGBEl.textContent = "";
+      colorHexEl.textContent = "";
+      colorCategoryEl.textContent = "";
+      colorRoomEl.textContent = "";
+      colorFinishDisplayEl.textContent = "";
+    }
   }
 
-  /* When a color button is clicked, load (or show) its overlay image on demand */
+  /* When a color button is clicked, load (or show) its overlay image and update details.
+     If the clicked color is already selected, do nothing. */
   function selectColor(colorId) {
+    if (colorId === currentColor) {
+      // Already selected; do nothing.
+      return;
+    }
     // Hide all overlays and remove active class from all color buttons
     Object.values(overlays).forEach((overlay) => (overlay.style.opacity = "0"));
     document
       .querySelectorAll(".color-button")
       .forEach((button) => button.classList.remove("active"));
 
-    if (colorId && colorId !== currentColor) {
+    if (colorId) {
       let overlay;
       if (overlays[colorId]) {
         overlay = overlays[colorId];
@@ -241,8 +273,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const button = document.querySelector(`[data-color="${colorId}"]`);
       if (button) button.classList.add("active");
       currentColor = colorId;
+      updateColorDetails(colorId);
     } else {
+      // Reset selection if null is passed
       currentColor = null;
+      updateColorDetails(null);
     }
   }
 
@@ -257,7 +292,47 @@ document.addEventListener("DOMContentLoaded", () => {
     initializeVisualizer(currentConfig);
   });
 
-  // Initial setup
+  // Mobile menu icon event listener for toggling the categories overlay
+  mobileMenuIcon.addEventListener("click", () => {
+    colorCategoriesContainer.classList.add("active");
+  });
+
+  // When the finish select changes, update the finish detail (if a color is selected)
+  document.getElementById("finishSelect").addEventListener("change", () => {
+    if (currentColor) {
+      updateColorDetails(currentColor);
+    }
+  });
+
+  // Initial setup: populate room select and set the default visualizer.
+  function populateRoomSelect() {
+    roomSelect.innerHTML = "";
+    Object.keys(visualizerConfigs).forEach((key) => {
+      const option = document.createElement("option");
+      option.value = key;
+      option.textContent =
+        key.charAt(0).toUpperCase() + key.slice(1).toLowerCase();
+      roomSelect.appendChild(option);
+    });
+  }
+
+  function initializeVisualizer(config) {
+    // Remove existing overlays
+    Object.values(overlays).forEach((overlay) => overlay.remove());
+    overlays = {};
+    currentColor = null;
+    baseImage.src = config.baseImage;
+
+    // Set default category button active (e.g., "Red")
+    const defaultCategory = "Red";
+    const catButtons = document.querySelectorAll(".category-button");
+    catButtons.forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.category === defaultCategory);
+    });
+    renderColorButtons(defaultCategory, colorCategories);
+    updateColorDetails(null);
+  }
+
   populateRoomSelect();
   currentConfig = visualizerConfigs[roomSelect.value];
   initializeVisualizer(currentConfig);

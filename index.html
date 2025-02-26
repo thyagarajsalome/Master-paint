@@ -21,13 +21,36 @@
       <!-- Color Selection Panel -->
       <div class="color-selection">
         <h4>Paint Color</h4>
-        <!-- Category Navigation -->
-        <div class="color-categories">
+        <!-- Mobile Menu Icon for Categories (visible only on mobile) -->
+        <div class="mobile-menu-icon" id="mobileMenuIcon">
+          &#9776; Categories
+        </div>
+        <!-- Category Navigation (in mobile, toggled as an overlay) -->
+        <div class="color-categories" id="colorCategoriesContainer">
+          <span class="mobile-close-icon" id="mobileCloseIcon"
+            >&times; Close</span
+          >
           <!-- Category buttons will be injected by JS -->
         </div>
-        <!-- Color buttons will be injected here based on the selected category -->
+        <!-- Color Options (buttons for individual colors) -->
         <div class="color-options"></div>
         <button class="reset-button" id="resetButton">Reset</button>
+        <!-- Color Details Panel -->
+        <div class="color-details" id="colorDetails">
+          <p id="colorRGB"></p>
+          <p id="colorHex"></p>
+          <p id="colorCategory"></p>
+          <p id="colorRoom"></p>
+          <div class="finish-selection">
+            <label for="finishSelect">Finish:</label>
+            <select id="finishSelect">
+              <option value="both">Both</option>
+              <option value="matt">Matt</option>
+              <option value="glossy">Glossy</option>
+            </select>
+          </div>
+          <p id="colorFinishDisplay"></p>
+        </div>
       </div>
     </div>
 

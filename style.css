@@ -31,10 +31,11 @@ body {
 
 /* Container Layout */
 .container {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr 300px;
   gap: 1.5rem;
   justify-content: center;
+  align-items: start;
 }
 .visualization-area {
   position: relative;
@@ -67,18 +68,28 @@ body {
 
 /* Color Selection Panel */
 .color-selection {
-  max-width: 300px;
-  width: 100%;
   background: #262626;
   padding: 1rem;
   border: 1px solid #333;
   border-radius: 8px;
+  position: relative;
 }
 .color-selection h4 {
   margin-bottom: 1rem;
   text-align: center;
   font-size: 1.25rem;
   color: #ff7043; /* coral accent */
+}
+
+/* Mobile Menu Icon */
+.mobile-menu-icon {
+  display: none;
+  cursor: pointer;
+  background: #333;
+  padding: 0.5rem;
+  text-align: center;
+  border-radius: 4px;
+  margin-bottom: 1rem;
 }
 
 /* Category Navigation */
@@ -103,7 +114,18 @@ body {
   background-color: #ff7043;
 }
 
-/* Color Options (buttons for individual colors) */
+/* Mobile Close Icon for Categories */
+.mobile-close-icon {
+  display: none;
+  cursor: pointer;
+  background: #333;
+  padding: 0.5rem;
+  text-align: right;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+/* Color Options */
 .color-options {
   display: flex;
   flex-wrap: wrap;
@@ -148,19 +170,53 @@ body {
   background-color: #444;
 }
 
+/* Color Details */
+.color-details {
+  margin-top: 1rem;
+  background: #333;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+.color-details p {
+  margin: 0.3rem 0;
+}
+.finish-selection {
+  margin-top: 0.5rem;
+}
+
 /* Responsive Breakpoints */
 @media (max-width: 576px) {
   html {
     font-size: 14px;
   }
   .container {
-    flex-direction: column;
-    align-items: center;
+    display: block;
   }
   .visualization-area,
   .color-selection {
     width: 100%;
     max-width: 100%;
+  }
+  .mobile-menu-icon {
+    display: block;
+  }
+  #colorCategoriesContainer {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: #262626;
+    padding: 1rem;
+    z-index: 100;
+    flex-wrap: wrap;
+  }
+  #colorCategoriesContainer.active {
+    display: flex;
+    flex-direction: column;
+  }
+  .mobile-close-icon {
+    display: block;
   }
 }
 @media (min-width: 577px) and (max-width: 768px) {
