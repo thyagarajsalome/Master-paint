@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Configuration for each category. Add or remove categories as needed.
+  // Configuration for each category.
   const visualizerConfigs = {
     kitchen: {
       baseImage: "./images-kitchen/base.jpg",
@@ -41,35 +41,34 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentColor = null;
   let currentConfig = null;
 
-  // Dynamically populate the select dropdown based on visualizerConfigs keys
+  // Populate the room select dropdown
   function populateRoomSelect() {
     roomSelect.innerHTML = "";
     Object.keys(visualizerConfigs).forEach((key) => {
       const option = document.createElement("option");
       option.value = key;
-      // Capitalize the first letter for display
       option.textContent = key.charAt(0).toUpperCase() + key.slice(1);
       roomSelect.appendChild(option);
     });
   }
 
-  // Initialize the visualizer with the given configuration
+  // Initialize the visualizer with the chosen configuration
   function initializeVisualizer(config) {
-    // Clear previous overlays and color buttons
+    // Remove any existing overlays and color buttons
     document
       .querySelectorAll(".color-overlay")
       .forEach((overlay) => overlay.remove());
     colorOptionsContainer.innerHTML = "";
     currentColor = null;
 
-    // Set the base image source
+    // Set the base image
     baseImage.src = config.baseImage;
 
-    // Create overlay images and corresponding color buttons dynamically using the global "colors" object
+    // Create overlays and corresponding color buttons
     Object.keys(colors)
-      .sort()
+      .sort((a, b) => Number(a) - Number(b))
       .forEach((key) => {
-        // Create overlay image element
+        // Create the overlay image element
         const overlayImg = document.createElement("img");
         overlayImg.src = `${config.overlayPath}${key}.jpg`;
         overlayImg.alt = "Overlay";
@@ -77,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
         overlayImg.id = `${key}-overlay`;
         visualizationArea.appendChild(overlayImg);
 
-        // Create color button element
+        // Create the color button element
         const colorItem = document.createElement("div");
         colorItem.className = "color-item";
         const button = document.createElement("button");
@@ -88,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
         colorItem.appendChild(button);
         colorOptionsContainer.appendChild(colorItem);
 
-        // Attach click event to toggle color selection
+        // Toggle color selection on click
         button.addEventListener("click", () => {
           selectColor(currentColor === key ? null : key);
         });
@@ -97,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Toggle the selection of a color
   function selectColor(colorId) {
-    // Reset all overlays and remove active states
+    // Reset overlays and remove active states
     document
       .querySelectorAll(".color-overlay")
       .forEach((overlay) => (overlay.style.opacity = "0"));
@@ -105,7 +104,6 @@ document.addEventListener("DOMContentLoaded", () => {
       .querySelectorAll(".color-button")
       .forEach((button) => button.classList.remove("active"));
 
-    // If a new color is chosen, activate its overlay and highlight its button
     if (colorId && colorId !== currentColor) {
       const overlay = document.getElementById(`${colorId}-overlay`);
       if (overlay) overlay.style.opacity = "1";
@@ -117,18 +115,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Reset the color selection
+  // Reset button event listener
   resetButton.addEventListener("click", () => {
     selectColor(null);
   });
 
-  // Update the visualizer when a different category is selected
+  // Change visualizer category when a new room is selected
   roomSelect.addEventListener("change", () => {
     currentConfig = visualizerConfigs[roomSelect.value];
     initializeVisualizer(currentConfig);
   });
 
-  // Initial population and setup
+  // Initial setup
   populateRoomSelect();
   currentConfig = visualizerConfigs[roomSelect.value];
   initializeVisualizer(currentConfig);
