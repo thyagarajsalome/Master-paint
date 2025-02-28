@@ -1,10 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
   // Configuration for each room/visualizer category
   const visualizerConfigs = {
-    // kitchen: {
-    //   baseImage: "./images-kitchen/base.jpg",
-    //   overlayPath: "./images-kitchen/",
-    // },
+    kitchen: {
+      baseImage: "./images-kitchen/base.jpg",
+      overlayPath: "./images-kitchen/",
+    },
     livingroom: {
       baseImage: "./images-livingroom/base.jpg",
       overlayPath: "./images-livingroom/",
