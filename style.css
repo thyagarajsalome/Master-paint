@@ -4,9 +4,11 @@
   margin: 0;
   padding: 0;
 }
+
 html {
   font-size: 16px;
 }
+
 body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background: #1a1a1a;
@@ -20,6 +22,7 @@ body {
   margin-bottom: 1.5rem;
   text-align: center;
 }
+
 .room-selection select {
   padding: 0.5rem 1rem;
   border-radius: 4px;
@@ -37,6 +40,7 @@ body {
   justify-content: center;
   align-items: start;
 }
+
 .visualization-area {
   position: relative;
   max-width: 800px;
@@ -45,6 +49,7 @@ body {
   border-radius: 8px;
   overflow: hidden;
 }
+
 #baseImage {
   display: block;
   width: 100%;
@@ -74,6 +79,7 @@ body {
   border-radius: 8px;
   position: relative;
 }
+
 .color-selection h4 {
   margin-bottom: 1rem;
   text-align: center;
@@ -100,6 +106,7 @@ body {
   justify-content: center;
   margin-bottom: 1rem;
 }
+
 .category-button {
   background: #333;
   color: #e0e0e0;
@@ -109,6 +116,7 @@ body {
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
+
 .category-button.active,
 .category-button:hover {
   background-color: #ff7043;
@@ -133,12 +141,14 @@ body {
   margin-bottom: 1rem;
   justify-content: center;
 }
+
 .color-item {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 48px;
 }
+
 .color-button {
   width: 48px;
   height: 48px;
@@ -148,6 +158,7 @@ body {
   outline: none;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
+
 .color-button.active {
   transform: scale(1.15);
   box-shadow: 0 0 8px rgba(38, 166, 154, 0.8);
@@ -166,6 +177,7 @@ body {
   color: #e0e0e0;
   font-size: 1rem;
 }
+
 .reset-button:hover {
   background-color: #444;
 }
@@ -177,9 +189,11 @@ body {
   padding: 0.5rem;
   border-radius: 4px;
 }
+
 .color-details p {
   margin: 0.3rem 0;
 }
+
 .finish-selection {
   margin-top: 0.5rem;
 }
@@ -189,19 +203,23 @@ body {
   html {
     font-size: 14px;
   }
+
   .container {
     display: block;
   }
+
   .visualization-area,
   .color-selection {
     width: 100%;
     max-width: 100%;
   }
+
   .mobile-menu-icon {
     display: block;
   }
+
   #colorCategoriesContainer {
-    display: none;
+    display: none; /* Fixed: Explicitly hide on larger screens */
     position: absolute;
     top: 0;
     left: 0;
@@ -211,41 +229,33 @@ body {
     z-index: 100;
     flex-wrap: wrap;
   }
+
   #colorCategoriesContainer.active {
     display: flex;
     flex-direction: column;
   }
+
   .mobile-close-icon {
     display: block;
   }
 }
+
 @media (min-width: 577px) and (max-width: 768px) {
   html {
     font-size: 15px;
   }
+
   .visualization-area {
     max-width: 600px;
   }
+
   .color-selection {
-    max-width: 280px;
+    max-width: 600px;
   }
 }
+
 @media (min-width: 769px) {
   html {
     font-size: 16px;
-  }
-}
-@media (max-width: 1024px) {
-  .visualization-area {
-    max-width: 1200px;
-  }
-  .color-selection {
-    max-width: 1024px;
-  }
-}
-@media (max-width: 1440px) {
-  .visualization-area,
-  .color-selection {
-    max-width: 1200px;
   }
 }
