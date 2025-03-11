@@ -13,6 +13,10 @@ document.addEventListener("DOMContentLoaded", () => {
       baseImage: "./images-bedroom/base.jpg",
       overlayPath: "./images-bedroom/",
     },
+    Exterior: {
+      baseImage: "./images-exterior/base.jpg",
+      overlayPath: "./images-exterior/",
+    },
     // bathroom: {
     //   baseImage: "./images-bathroom/base.jpg",
     //   overlayPath: "./images-bathroom/",
@@ -20,10 +24,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // furniture: {
     //   baseImage: "./images-furniture/base.jpg",
     //   overlayPath: "./images-furniture/",
-    // },
-    // exterior: {
-    //   baseImage: "./images-exterior/base.jpg",
-    //   overlayPath: "./images-exterior/",
     // },
     // patio: {
     //   baseImage: "./images-patio/base.jpg",
