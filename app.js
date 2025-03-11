@@ -9,10 +9,10 @@ document.addEventListener("DOMContentLoaded", () => {
       baseImage: "./images-livingroom/base.jpg",
       overlayPath: "./images-livingroom/",
     },
-    // bedroom: {
-    //   baseImage: "./images-bedroom/base.jpg",
-    //   overlayPath: "./images-bedroom/",
-    // },
+    bedroom: {
+      baseImage: "./images-bedroom/base.jpg",
+      overlayPath: "./images-bedroom/",
+    },
     // bathroom: {
     //   baseImage: "./images-bathroom/base.jpg",
     //   overlayPath: "./images-bathroom/",
