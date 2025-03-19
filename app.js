@@ -1,15 +1,15 @@
 document.addEventListener("DOMContentLoaded", () => {
   // Configuration for each room/visualizer category
   const visualizerConfigs = {
-    kitchen: {
-      baseImage: "./images-kitchen/base.jpg",
-      overlayPath: "./images-kitchen/",
-    },
     livingroom: {
       baseImage: "./images-livingroom/base.jpg",
       overlayPath: "./images-livingroom/",
     },
-    bedroom: {
+    kitchen: {
+      baseImage: "./images-kitchen/base.jpg",
+      overlayPath: "./images-kitchen/",
+    },
+    Bedroom: {
       baseImage: "./images-bedroom/base.jpg",
       overlayPath: "./images-bedroom/",
     },
@@ -17,18 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
       baseImage: "./images-exterior/base.jpg",
       overlayPath: "./images-exterior/",
     },
-    // bathroom: {
-    //   baseImage: "./images-bathroom/base.jpg",
-    //   overlayPath: "./images-bathroom/",
-    // },
-    // furniture: {
-    //   baseImage: "./images-furniture/base.jpg",
-    //   overlayPath: "./images-furniture/",
-    // },
-    // patio: {
-    //   baseImage: "./images-patio/base.jpg",
-    //   overlayPath: "./images-patio/",
-    // },
   };
 
   // DOM elements
@@ -97,29 +85,29 @@ document.addEventListener("DOMContentLoaded", () => {
     const regex = /rgb\(\s*(\d+),\s*(\d+),\s*(\d+)\s*\)/;
     const result = regex.exec(rgbStr);
     if (!result) return "Neutral";
-    const r = parseInt(result[1]),
-      g = parseInt(result[2]),
-      b = parseInt(result[3]);
+    const r = parseInt(result[1]);
+    const g = parseInt(result[2]);
+    const b = parseInt(result[3]);
     const { h, s, l } = rgbToHsl(r, g, b);
-    if (s < 0.25 || l < 0.2 || l > 0.8) {
+
+    // Only consider colors as Neutral if they are very desaturated or very light/dark.
+    if (s < 0.1 || l < 0.15 || l > 0.85) {
       return "Neutral";
     }
-    if (h >= 345 || h < 15) {
+
+    // Use hue-based categorization:
+    if (h < 15 || h >= 345) {
       return "Red";
-    }
-    if (h >= 15 && h < 45) {
+    } else if (h < 45) {
+      // Differentiate between Brown and Orange using lightness
       return l < 0.5 ? "Brown" : "Orange";
-    }
-    if (h >= 45 && h < 75) {
+    } else if (h < 75) {
       return "Yellow";
-    }
-    if (h >= 75 && h < 150) {
+    } else if (h < 165) {
       return "Green";
-    }
-    if (h >= 150 && h < 225) {
+    } else if (h < 255) {
       return "Blue";
-    }
-    if (h >= 225 && h < 345) {
+    } else if (h < 345) {
       return "Purple";
     }
     return "Neutral";
@@ -247,7 +235,6 @@ document.addEventListener("DOMContentLoaded", () => {
      If the clicked color is already selected, do nothing. */
   function selectColor(colorId) {
     if (colorId === currentColor) {
-      // Already selected; do nothing.
       return;
     }
     // Hide all overlays and remove active class from all color buttons
@@ -275,13 +262,12 @@ document.addEventListener("DOMContentLoaded", () => {
       currentColor = colorId;
       updateColorDetails(colorId);
     } else {
-      // Reset selection if null is passed
       currentColor = null;
       updateColorDetails(null);
     }
   }
 
-  // Reset button clears the current selection.
+  // Reset button event clears the current selection.
   resetButton.addEventListener("click", () => {
     selectColor(null);
   });
@@ -292,12 +278,12 @@ document.addEventListener("DOMContentLoaded", () => {
     initializeVisualizer(currentConfig);
   });
 
-  // Mobile menu icon event listener for toggling the categories overlay
+  // Mobile menu icon event listener for toggling the categories overlay.
   mobileMenuIcon.addEventListener("click", () => {
     colorCategoriesContainer.classList.add("active");
   });
 
-  // When the finish select changes, update the finish detail (if a color is selected)
+  // When the finish select changes, update the finish detail (if a color is selected).
   document.getElementById("finishSelect").addEventListener("change", () => {
     if (currentColor) {
       updateColorDetails(currentColor);
@@ -334,7 +320,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   populateRoomSelect();
-  currentConfig = visualizerConfigs[roomSelect.value];
+  currentConfig =
+    visualizerConfigs[roomSelect.value] || visualizerConfigs.livingroom;
   initializeVisualizer(currentConfig);
   renderCategoryButtons(colorCategories);
   setupCategoryButtonListeners(colorCategories);
