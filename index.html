@@ -4,57 +4,426 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Paint Visualizer</title>
-    <link rel="stylesheet" href="./style.css" />
+    <style>
+      /* Reset & Base Styles */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        font-size: 16px;
+      }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #1a1a1a;
+        color: #e0e0e0;
+        line-height: 1.6;
+        padding: 1rem;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+      /* ========= Hero Section ========= */
+      .hero {
+        background: url("hero-bg.jpg") no-repeat center center/cover;
+        padding: 4rem 1rem;
+        text-align: center;
+        color: #fff;
+      }
+      .hero-content {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .hero h1 {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+      }
+      .hero p {
+        font-size: 1.25rem;
+      }
+      @media (max-width: 576px) {
+        .hero h1 {
+          font-size: 2rem;
+        }
+        .hero p {
+          font-size: 1rem;
+        }
+      }
+      /* Room Navbar */
+      .room-navbar {
+        text-align: start;
+        margin-bottom: 1.5rem;
+      }
+      .room-button {
+        padding: 0.5rem 1rem;
+        margin: 0 0.5rem 0.5rem 0;
+        border: 1px solid gray;
+        background-color: #262626;
+        color: #e0e0e0;
+        font-size: 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+      }
+      .room-button.active,
+      .room-button:hover {
+        background-color: gray;
+      }
+      /* Layout: visualizer on top, color preview below */
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .visualization-area {
+        position: relative;
+        width: 100%;
+        border: 2px solid #333;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+      }
+      #baseImage {
+        display: block;
+        width: 100%;
+        height: auto;
+        position: relative;
+        z-index: 1;
+      }
+      /* Overlay (created on demand) */
+      .color-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 2;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        mix-blend-mode: multiply;
+      }
+      /* Color Selection Panel */
+      .color-selection {
+        background: #262626;
+        padding: 1rem;
+        border: 1px solid #333;
+        border-radius: 8px;
+      }
+      .color-selection h4 {
+        margin-bottom: 1rem;
+        text-align: center;
+        font-size: 1.25rem;
+        color: #ff7043;
+      }
+      /* Colors Scroll Container */
+      .colors-scroll-container {
+        max-height: 150px; /* adjust height as needed */
+        overflow-y: auto;
+        scroll-behavior: smooth;
+        margin-bottom: 1rem;
+        padding-right: 0.5rem; /* space for scrollbar if needed */
+      }
+      /* Color Options */
+      .color-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.3rem;
+        justify-content: center;
+      }
+      .color-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 28px;
+      }
+      .color-button {
+        width: 28px;
+        height: 28px;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        outline: none;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+      .color-button.active {
+        transform: scale(1.15);
+        box-shadow: 0 0 8px rgba(38, 166, 154, 0.8);
+      }
+      /* Reset Button */
+      .reset-button {
+        background-color: #333;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        display: block;
+        margin: 0.5rem auto;
+        color: #e0e0e0;
+        font-size: 1rem;
+      }
+      .reset-button:hover {
+        background-color: #444;
+      }
+
+      /* Responsive Breakpoints */
+      @media (max-width: 576px) {
+        html {
+          font-size: 14px;
+        }
+      }
+      @media (min-width: 577px) and (max-width: 768px) {
+        html {
+          font-size: 15px;
+        }
+      }
+      @media (min-width: 769px) {
+        html {
+          font-size: 16px;
+        }
+      }
+    </style>
   </head>
   <body>
-    <!-- Room selection -->
-    <div class="room-selection">
-      <select id="roomSelect"></select>
-    </div>
+    <!-- Room Navbar -->
+    <nav class="room-navbar">
+      <button class="room-button" data-room="livingroom">Livingroom</button>
+      <button class="room-button" data-room="kitchen">Kitchen</button>
+      <button class="room-button" data-room="Bedroom">Bedroom</button>
+      <button class="room-button" data-room="Exterior">Exterior</button>
+    </nav>
+
     <div class="container">
-      <!-- Visualization Area -->
+      <!-- Visualization Area (remains fixed while colors scroll) -->
       <div class="visualization-area">
         <img src="" alt="Base" id="baseImage" />
       </div>
 
       <!-- Color Selection Panel -->
       <div class="color-selection">
-        <h4>Paint Color</h4>
-        <!-- Mobile Menu Icon for Categories (visible only on mobile) -->
-        <div class="mobile-menu-icon" id="mobileMenuIcon">
-          &#9776; Categories
+        <h4>Paint Colors</h4>
+        <!-- Colors Scroll Container -->
+        <div class="colors-scroll-container">
+          <!-- Color Options (all color buttons are rendered here) -->
+          <div class="color-options" id="colorOptionsContainer"></div>
         </div>
-        <!-- Category Navigation (in mobile, toggled as an overlay) -->
-        <div class="color-categories" id="colorCategoriesContainer">
-          <span class="mobile-close-icon" id="mobileCloseIcon"
-            >&times; Close</span
-          >
-          <!-- Category buttons will be injected by JS -->
-        </div>
-        <!-- Color Options (buttons for individual colors) -->
-        <div class="color-options"></div>
         <button class="reset-button" id="resetButton">Reset</button>
-        <!-- Color Details Panel -->
-        <div class="color-details" id="colorDetails">
-          <p id="colorRGB"></p>
-          <p id="colorHex"></p>
-          <p id="colorCategory"></p>
-          <p id="colorRoom"></p>
-          <div class="finish-selection">
-            <label for="finishSelect">Finish:</label>
-            <select id="finishSelect">
-              <option value="both">Both</option>
-              <option value="matt">Matt</option>
-              <option value="glossy">Glossy</option>
-            </select>
-          </div>
-          <p id="colorFinishDisplay"></p>
-        </div>
       </div>
     </div>
 
-    <!-- Colors data and application logic -->
+    <!-- Application Logic -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Configuration for each room/visualizer category
+        const visualizerConfigs = {
+          livingroom: {
+            baseImage: "./images-livingroom/base.jpg",
+            overlayPath: "./images-livingroom/",
+          },
+          kitchen: {
+            baseImage: "./images-kitchen/base.jpg",
+            overlayPath: "./images-kitchen/",
+          },
+          Bedroom: {
+            baseImage: "./images-bedroom/base.jpg",
+            overlayPath: "./images-bedroom/",
+          },
+          Exterior: {
+            baseImage: "./images-exterior/base.jpg",
+            overlayPath: "./images-exterior/",
+          },
+        };
+
+        // DOM elements
+        const baseImage = document.getElementById("baseImage");
+        const visualizationArea = document.querySelector(".visualization-area");
+        const colorOptionsContainer = document.getElementById(
+          "colorOptionsContainer"
+        );
+        const resetButton = document.getElementById("resetButton");
+        const roomButtons = document.querySelectorAll(".room-button");
+
+        // Global variables
+        let currentColor = null;
+        let currentConfig = null;
+        let currentRoom = null;
+        let overlays = {}; // to hold overlay image elements
+
+        /* Helper: Convert "rgb(r, g, b)" string to an HSL object */
+        function rgbToHsl(r, g, b) {
+          r /= 255;
+          g /= 255;
+          b /= 255;
+          const max = Math.max(r, g, b),
+            min = Math.min(r, g, b);
+          let h,
+            s,
+            l = (max + min) / 2;
+          if (max === min) {
+            h = s = 0;
+          } else {
+            const d = max - min;
+            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+            switch (max) {
+              case r:
+                h = (g - b) / d + (g < b ? 6 : 0);
+                break;
+              case g:
+                h = (b - r) / d + 2;
+                break;
+              case b:
+                h = (r - g) / d + 4;
+                break;
+            }
+            h *= 60;
+          }
+          return { h, s, l };
+        }
+
+        /* Helper: Convert "rgb(r, g, b)" to Hex string */
+        function rgbStringToHex(rgbStr) {
+          const regex = /rgb\(\s*(\d+),\s*(\d+),\s*(\d+)\s*\)/;
+          const result = regex.exec(rgbStr);
+          if (!result) return "#000000";
+          const r = parseInt(result[1]).toString(16).padStart(2, "0");
+          const g = parseInt(result[2]).toString(16).padStart(2, "0");
+          const b = parseInt(result[3]).toString(16).padStart(2, "0");
+          return `#${r}${g}${b}`;
+        }
+
+        /* Update color details in the preview panel */
+        function updateColorDetails(colorId) {
+          const colorRGBEl = document.getElementById("colorRGB");
+          const colorHexEl = document.getElementById("colorHex");
+          const colorRoomEl = document.getElementById("colorRoom");
+          const colorFinishDisplayEl =
+            document.getElementById("colorFinishDisplay");
+
+          if (colorId) {
+            const rgbValue = colors[colorId];
+            const hexValue = rgbStringToHex(rgbValue);
+            const room =
+              currentRoom.charAt(0).toUpperCase() + currentRoom.slice(1);
+
+            colorRGBEl.textContent = `RGB: ${rgbValue}`;
+            colorHexEl.textContent = `Hex: ${hexValue}`;
+            colorRoomEl.textContent = `Room: ${room}`;
+            colorFinishDisplayEl.textContent = `Finish: ${finish}`;
+          } else {
+            colorRGBEl.textContent = "";
+            colorHexEl.textContent = "";
+            colorRoomEl.textContent = "";
+            colorFinishDisplayEl.textContent = "";
+          }
+        }
+
+        /* Render all color buttons together */
+        function renderAllColors() {
+          colorOptionsContainer.innerHTML = "";
+          // Sort keys numerically (assuming keys are numbers or numeric strings)
+          const sortedKeys = Object.keys(colors).sort(
+            (a, b) => Number(a) - Number(b)
+          );
+          sortedKeys.forEach((key) => {
+            const colorItem = document.createElement("div");
+            colorItem.className = "color-item";
+            const button = document.createElement("button");
+            button.className = "color-button";
+            button.dataset.color = key;
+            button.style.backgroundColor = colors[key];
+            button.setAttribute("aria-label", "Color");
+            colorItem.appendChild(button);
+            colorOptionsContainer.appendChild(colorItem);
+            button.addEventListener("click", () => {
+              if (currentColor !== key) {
+                selectColor(key);
+              }
+            });
+          });
+        }
+
+        /* When a color button is clicked, load (or show) its overlay image and update details */
+        function selectColor(colorId) {
+          if (colorId === currentColor) return;
+          // Hide all overlays
+          Object.values(overlays).forEach(
+            (overlay) => (overlay.style.opacity = "0")
+          );
+          // Remove active class from all buttons
+          document
+            .querySelectorAll(".color-button")
+            .forEach((button) => button.classList.remove("active"));
+
+          if (colorId) {
+            let overlay;
+            if (overlays[colorId]) {
+              overlay = overlays[colorId];
+            } else {
+              overlay = document.createElement("img");
+              overlay.src = `${currentConfig.overlayPath}${colorId}.jpg`;
+              overlay.alt = "Overlay";
+              overlay.className = "color-overlay";
+              overlay.style.opacity = "0";
+              visualizationArea.appendChild(overlay);
+              overlays[colorId] = overlay;
+            }
+            overlay.style.opacity = "1";
+            const button = document.querySelector(`[data-color="${colorId}"]`);
+            if (button) button.classList.add("active");
+            currentColor = colorId;
+            updateColorDetails(colorId);
+          } else {
+            currentColor = null;
+            updateColorDetails(null);
+          }
+        }
+
+        resetButton.addEventListener("click", () => {
+          selectColor(null);
+        });
+
+        // Update finish details on change
+        document.addEventListener("change", () => {
+          if (currentColor) {
+            updateColorDetails(currentColor);
+          }
+        });
+
+        function initializeVisualizer(config) {
+          // Remove any existing overlays
+          Object.values(overlays).forEach((overlay) => overlay.remove());
+          overlays = {};
+          currentColor = null;
+          baseImage.src = config.baseImage;
+          renderAllColors();
+          updateColorDetails(null);
+        }
+
+        // Setup room navbar event listeners
+        roomButtons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            roomButtons.forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+            currentRoom = btn.dataset.room;
+            currentConfig = visualizerConfigs[currentRoom];
+            initializeVisualizer(currentConfig);
+          });
+        });
+
+        // Set default room as Livingroom
+        const defaultRoomButton = document.querySelector(
+          '.room-button[data-room="livingroom"]'
+        );
+        if (defaultRoomButton) {
+          defaultRoomButton.classList.add("active");
+          currentRoom = defaultRoomButton.dataset.room;
+          currentConfig = visualizerConfigs[currentRoom];
+        }
+        initializeVisualizer(currentConfig);
+      });
+    </script>
+    <!-- Colors data file remains the same -->
     <script src="./colors.js"></script>
-    <script src="./app.js"></script>
   </body>
 </html>
