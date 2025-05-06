@@ -193,7 +193,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const colorHexEl = document.getElementById("colorHex");
     const colorCategoryEl = document.getElementById("colorCategory");
     const colorRoomEl = document.getElementById("colorRoom");
-    const colorFinishDisplayEl = document.getElementById("colorFinishDisplay");
+    ("colorFinishDisplay");
 
     if (colorId) {
       const rgbValue = colors[colorId];
@@ -206,13 +206,11 @@ document.addEventListener("DOMContentLoaded", () => {
       colorCategoryEl.textContent = `Color Category: ${category}`;
       colorRoomEl.textContent = `Room: ${room}`;
       // Assume 'finish' is defined elsewhere or set default here
-      colorFinishDisplayEl.textContent = `Finish: Matte`;
     } else {
       colorRGBEl.textContent = "";
       colorHexEl.textContent = "";
       colorCategoryEl.textContent = "";
       colorRoomEl.textContent = "";
-      colorFinishDisplayEl.textContent = "";
     }
   }
 

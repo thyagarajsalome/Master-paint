@@ -357,7 +357,7 @@ ul {
 /* Color Details */
 .color-details {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-around;
   margin-top: 1rem;
   background: #333;
   padding: 0.5rem;
@@ -365,6 +365,11 @@ ul {
   text-align: start;
 }
 .color-details p {
+  border-radius: 5px;
+  border: 0.5px dashed rgba(128, 128, 128, 0.467);
+  padding: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
   margin: 0.3rem 0;
 }
 .finish-selection {
