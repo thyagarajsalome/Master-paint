@@ -161,10 +161,10 @@ ul {
 
 /* Visualizer Section */
 .visualizer-section {
-  padding: 4rem 0;
+  padding: 1rem 0;
 }
 .blog-section {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   background: #262626;
   padding: 1.5rem;
   border-radius: 8px;
@@ -377,6 +377,7 @@ ul {
 }
 
 /* ========= Footer Section ========= */
+
 .main-footer {
   background-color: #111;
   padding: 3rem 0 1rem;
@@ -606,4 +607,19 @@ ul {
   .color-selection {
     max-width: 1200px;
   }
+}
+
+/* back to home */
+.back-home-button {
+  padding: 0.75rem 1.5rem;
+  background-color: #333;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.back-home-button:hover {
+  background-color: #555;
 }
