@@ -611,6 +611,7 @@ ul {
 
 /* back to home */
 .back-home-button {
+  justify-content: space-between;
   padding: 0.75rem 1.5rem;
   background-color: #333;
   color: white;
@@ -622,6 +623,12 @@ ul {
 
 .back-home-button:hover {
   background-color: #555;
+}
+
+.back-btn {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
 /* /* Make sure the nav toggle is visible and properly styled on mobile */
