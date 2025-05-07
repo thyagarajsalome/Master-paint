@@ -616,6 +616,13 @@ ul {
   }
 }
 
+@media (max-width: 2560px) {
+  .visualization-area,
+  .color-selection {
+    max-width: 1200px;
+  }
+}
+
 /* back to home */
 .back-home-button {
   justify-content: space-between;
