@@ -623,3 +623,37 @@ ul {
 .back-home-button:hover {
   background-color: #555;
 }
+
+/* /* Make sure the nav toggle is visible and properly styled on mobile */
+.nav-toggle {
+  display: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #ff7043;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.nav-toggle:hover {
+  background-color: rgba(255, 112, 67, 0.1);
+}
+
+/* Make sure it displays on mobile devices */
+@media (max-width: 768px) {
+  .nav-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Ensure the icon is visible */
+  .nav-toggle i {
+    display: block;
+  }
+
+  /* Style for when the menu is expanded */
+  .main-nav.show {
+    display: block;
+  }
+}

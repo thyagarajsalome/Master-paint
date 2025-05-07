@@ -2,16 +2,21 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Paint Visualizer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Website Title</title>
     <link rel="stylesheet" href="./css/normalize.css" />
     <link rel="stylesheet" href="./css/style.css" />
+    <!-- Add Font Awesome for the hamburger icon -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
   </head>
   <body>
     <!-- Main Navigation -->
     <header class="main-header">
       <div class="container header-container">
-        <div class="logo"><img src="./logo-small.png" alt="" /></div>
+        <div class="logo"><img src="./logo-small.png" alt="Logo" /></div>
         <div class="nav-toggle" id="navToggle">
           <i class="fas fa-bars"></i>
         </div>
@@ -152,22 +157,19 @@
     </footer>
 
     <!-- Application Logic -->
-    <script src="./index.js"></script>
-    <!-- Colors data file remains the same -->
-    <script src="./colors.js"></script>
-    <!-- New navigation toggle script -->
+
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        // Navigation toggle for mobile
         const navToggle = document.getElementById("navToggle");
         const mainNav = document.getElementById("mainNav");
 
-        if (navToggle) {
-          navToggle.addEventListener("click", function () {
-            mainNav.classList.toggle("show");
-          });
-        }
+        navToggle.addEventListener("click", function () {
+          mainNav.classList.toggle("show");
+        });
       });
     </script>
+
+    <script src="./index.js"></script>
+    <script src="./colors.js"></script>
   </body>
 </html>
