@@ -120,7 +120,7 @@ ul {
   background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)),
     url("hero-bg.jpg") no-repeat center center/cover;
   padding: 1rem 1rem;
-  max-height: 40vh;
+  max-height: 70vh;
   display: flex;
   align-items: center;
   text-align: center;
