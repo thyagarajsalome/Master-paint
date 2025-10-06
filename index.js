@@ -78,44 +78,49 @@ document.addEventListener("DOMContentLoaded", () => {
     return `#${r}${g}${b}`;
   }
 
-  /* Determine a category for a given RGB string */
+  /**
+   * Determine a category for a given RGB string.
+   * This function now has more refined thresholds for better color sorting.
+   */
   function getColorCategory(rgbStr) {
     const regex = /rgb\(\s*(\d+),\s*(\d+),\s*(\d+)\s*\)/;
     const result = regex.exec(rgbStr);
     if (!result) return "Neutral";
+
     const r = parseInt(result[1]);
     const g = parseInt(result[2]);
     const b = parseInt(result[3]);
     const { h, s, l } = rgbToHsl(r, g, b);
-    if (s < 0.1 || l < 0.15 || l > 0.85) {
+
+    // Grays, blacks, and whites are neutrals
+    if (s < 0.15 || l < 0.1 || l > 0.9) {
       return "Neutral";
     }
-    if (h < 15 || h >= 345) {
-      return "Red";
-    } else if (h < 45) {
-      return l < 0.5 ? "Brown" : "Orange";
-    } else if (h < 75) {
-      return "Yellow";
-    } else if (h < 165) {
-      return "Green";
-    } else if (h < 255) {
-      return "Blue";
-    } else if (h < 345) {
-      return "Purple";
+
+    if (h >= 0 && h < 15) return "Red";
+    if (h >= 15 && h < 45) {
+      // Distinguish between brown and orange based on lightness
+      return l < 0.6 ? "Brown" : "Orange";
     }
-    return "Neutral";
+    if (h >= 45 && h < 70) return "Yellow";
+    if (h >= 70 && h < 160) return "Green";
+    if (h >= 160 && h < 260) return "Blue";
+    if (h >= 260 && h < 340) return "Purple";
+    if (h >= 340 && h <= 360) return "Red";
+
+    return "Neutral"; // Fallback
   }
 
-  /* Group color keys into 8 categories */
+  /* Group color keys into categories */
   function buildColorCategories() {
     const categories = {
       Red: [],
-      Brown: [],
       Orange: [],
       Yellow: [],
       Green: [],
       Blue: [],
       Purple: [],
+      Brown: [],
       Neutral: [],
     };
     for (let key in colors) {
@@ -133,13 +138,28 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderCategoryButtons(colorCategories) {
     colorCategoriesContainer.innerHTML =
       '<span class="mobile-close-icon" id="mobileCloseIcon">&times; Close</span>';
-    Object.keys(colorCategories).forEach((category) => {
-      const btn = document.createElement("button");
-      btn.className = "category-button";
-      btn.dataset.category = category;
-      btn.textContent = category;
-      colorCategoriesContainer.appendChild(btn);
+    // Define the desired order of categories
+    const categoryOrder = [
+      "Red",
+      "Orange",
+      "Yellow",
+      "Green",
+      "Blue",
+      "Purple",
+      "Brown",
+      "Neutral",
+    ];
+
+    categoryOrder.forEach((category) => {
+      if (colorCategories[category]) {
+        const btn = document.createElement("button");
+        btn.className = "category-button";
+        btn.dataset.category = category;
+        btn.textContent = category;
+        colorCategoriesContainer.appendChild(btn);
+      }
     });
+
     const mobileCloseIconNew = document.getElementById("mobileCloseIcon");
     mobileCloseIconNew.addEventListener("click", () => {
       colorCategoriesContainer.classList.remove("active");
@@ -159,7 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
       button.className = "color-button";
       button.dataset.color = key;
       button.style.backgroundColor = colors[key];
-      button.setAttribute("aria-label", "Color");
+      button.setAttribute("aria-label", `Color ${key}`);
       colorItem.appendChild(button);
       colorOptionsContainer.appendChild(colorItem);
       button.addEventListener("click", () => {
@@ -193,7 +213,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const colorHexEl = document.getElementById("colorHex");
     const colorCategoryEl = document.getElementById("colorCategory");
     const colorRoomEl = document.getElementById("colorRoom");
-    ("colorFinishDisplay");
 
     if (colorId) {
       const rgbValue = colors[colorId];
@@ -203,11 +222,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       colorRGBEl.textContent = `RGB: ${rgbValue}`;
       colorHexEl.textContent = `Hex: ${hexValue}`;
-      colorCategoryEl.textContent = `Color Category: ${category}`;
+      colorCategoryEl.textContent = `Category: ${category}`;
       colorRoomEl.textContent = `Room: ${room}`;
-      // Assume 'finish' is defined elsewhere or set default here
     } else {
-      colorRGBEl.textContent = "";
+      colorRGBEl.textContent = "Select a Color";
       colorHexEl.textContent = "";
       colorCategoryEl.textContent = "";
       colorRoomEl.textContent = "";
@@ -296,7 +314,9 @@ document.addEventListener("DOMContentLoaded", () => {
     currentRoom = defaultRoomButton.dataset.room;
     currentConfig = visualizerConfigs[currentRoom];
   }
-  initializeVisualizer(currentConfig);
+
+  // Initial setup
   renderCategoryButtons(colorCategories);
   setupCategoryButtonListeners(colorCategories);
+  initializeVisualizer(currentConfig); // Initialize with the default config
 });
