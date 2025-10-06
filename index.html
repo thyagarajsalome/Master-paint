@@ -1,690 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Paint Visualizer</title>
-    <!-- If the actual URL is: https://toolwebsite.in/paint.html?source=adwords -->
-    <link
-      rel="canonical"
-      href="https://toolwebsite.in/PaintVisualization.html"
+    <meta name="msvalidate.01" content="061B4082725F1B3C4EE90801D169C0C2" />
+    <meta
+      name="google-site-verification"
+      content="SffIdJrNUgctC2BGUo-WAG4Cd8olaW40WE_W9kqKJ5I"
     />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wall Paint</title>
 
-    <style>
-      /* Reset & Base Styles */
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-      html {
-        font-size: 16px;
-      }
-      body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background: #1a1a1a;
-        color: #e0e0e0;
-        line-height: 1.6;
-        padding: 1rem;
-      }
-      a {
-        text-decoration: none;
-        color: inherit;
-      }
+    <meta
+      name="description"
+      content="Discover premium wall paint solutions at wallpaint.in…"
+    />
+    <meta name="keywords" content="wall paint, interior paint, color trends…" />
+    <meta name="author" content="wallpaint.in" />
 
-      .blog-section {
-        margin-bottom: 20px;
-      }
-      /* ========= Hero Section ========= */
-      .hero {
-        background: url("hero-bg.jpg") no-repeat center center/cover;
-        padding: 4rem 1rem;
-        text-align: center;
-        color: #fff;
-      }
-      .hero-content {
-        max-width: 1200px;
-        margin: 0 auto;
-      }
-      .hero h1 {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-      }
-      .hero p {
-        font-size: 1.25rem;
-      }
-      @media (max-width: 576px) {
-        .hero h1 {
-          font-size: 2rem;
-        }
-        .hero p {
-          font-size: 1rem;
-        }
-      }
-      /* Room Navbar */
-      .room-navbar {
-        text-align: center;
-        margin-bottom: 1.5rem;
-      }
-      .room-button {
-        padding: 0.5rem 1rem;
-        border: 1px solid gray;
-        background-color: #262626;
-        color: #e0e0e0;
-        font-size: 1rem;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
-        margin: 0.25rem;
-      }
-      .room-button.active,
-      .room-button:hover {
-        background-color: gray;
-      }
-      /* Main Container */
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 1rem;
-      }
-      /* Revised Layout: Stack the visualization area and the color selection */
-      .visualizer-layout {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1.5rem;
-        justify-content: center;
-        align-items: flex-start;
-      }
-      /* Visualization Area - enlarged and centered */
-      .visualization-area {
-        position: relative;
-        width: 100%;
-        max-width: 100%; /* Allow full width of container */
-        margin: 0 auto; /* Center the visualizer area */
-        border: 2px solid #333;
-        border-radius: 8px;
-        overflow: hidden;
-      }
-      #baseImage {
-        display: block;
-        width: 100%;
-        height: auto;
-        position: relative;
-        z-index: 1;
-      }
-      /* Overlay (created on demand) */
-      .color-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 2;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        mix-blend-mode: multiply;
-      }
-      /* Color Selection Panel */
-      .color-selection {
-        background: #262626;
-        padding: 0.5rem;
-        border: 1px solid #333;
-        border-radius: 8px;
-        width: 100%;
-        max-width: 400px;
-        margin: 0 auto;
-      }
-      .color-selection h4 {
-        margin-bottom: 1rem;
-        text-align: center;
-        font-size: 1.25rem;
-        color: #ff7043;
-      }
-      /* Mobile Menu Icon */
-      .mobile-menu-icon {
-        display: none;
-        cursor: pointer;
-        background: #333;
-        padding: 0.5rem;
-        text-align: center;
-        border-radius: 4px;
-        margin-bottom: 1rem;
-      }
-      /* Category Navigation */
-      .color-categories {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        justify-content: center;
-        margin-bottom: 1rem;
-      }
-      .category-button {
-        background: #333;
-        color: #e0e0e0;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
-      }
-      .category-button.active,
-      .category-button:hover {
-        background-color: #ff7043;
-      }
-      /* Mobile Close Icon for Categories */
-      .mobile-close-icon {
-        display: none;
-        cursor: pointer;
-        background: #333;
-        padding: 0.5rem;
-        text-align: right;
-        width: 100%;
-        margin-bottom: 0.5rem;
-      }
-      /* Color Options */
-      .color-options {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.3rem;
-        margin-bottom: 1rem;
-        justify-content: center;
-      }
-      .color-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 28px;
-      }
-      .color-button {
-        width: 28px;
-        height: 28px;
-        border: none;
-        border-radius: 3px;
-        cursor: pointer;
-        outline: none;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-      }
-      .color-button.active {
-        transform: scale(1.15);
-        box-shadow: 0 0 8px rgba(38, 166, 154, 0.8);
-      }
-      /* Reset Button */
-      .reset-button {
-        background-color: #333;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
-        display: block;
-        margin: 0.5rem auto;
-        color: #e0e0e0;
-        font-size: 1rem;
-      }
-      .reset-button:hover {
-        background-color: #444;
-      }
-      /* Color Details */
-      .color-details {
-        margin-top: 1rem;
-        background: #333;
-        padding: 0.5rem;
-        border-radius: 4px;
-        text-align: center;
-      }
-      .color-details p {
-        margin: 0.3rem 0;
-      }
-      .finish-selection {
-        margin-top: 0.5rem;
-      }
-      /* Responsive Breakpoints */
-      @media (max-width: 576px) {
-        html {
-          font-size: 14px;
-        }
-        .visualizer-layout {
-          flex-direction: column;
-          align-items: center;
-        }
-        .visualization-area {
-          /* Increase size by ensuring full width */
-          width: 100%;
-        }
-        .room-navbar {
-          text-align: center;
-        }
-        .mobile-menu-icon {
-          display: block;
-        }
-        #colorCategoriesContainer {
-          display: none;
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          background: #262626;
-          padding: 1rem;
-          z-index: 100;
-          flex-wrap: wrap;
-        }
-        #colorCategoriesContainer.active {
-          display: flex;
-          flex-direction: column;
-        }
-        .mobile-close-icon {
-          display: block;
-        }
-      }
-      @media (min-width: 577px) and (max-width: 768px) {
-        html {
-          font-size: 15px;
-        }
-        .visualization-area {
-          max-width: 100%;
-          width: 100%;
-        }
-        .color-selection {
-          max-width: 350px;
-        }
-      }
-      @media (min-width: 769px) {
-        html {
-          font-size: 16px;
-        }
-      }
-      @media (max-width: 1440px) {
-        .visualization-area,
-        .color-selection {
-          max-width: 1200px;
-        }
-      }
-    </style>
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#ff7043" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-title" content="WallPaint" />
+    <link rel="apple-touch-icon" href="/icons/icon-152x152.png" />
+
+    <link rel="canonical" href="https://wallpaint.in/this-page-slug.html" />
+    <meta name="robots" content="index, follow" />
+
+    <link rel="stylesheet" href="./css/normalize.css" />
+    <link rel="stylesheet" href="/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
   </head>
+
   <body>
-    <!-- Room Navbar -->
-    <nav class="room-navbar">
-      <button class="room-button" data-room="livingroom">Livingroom</button>
-      <button class="room-button" data-room="kitchen">Kitchen</button>
-      <button class="room-button" data-room="Bedroom">Bedroom</button>
-      <button class="room-button" data-room="Exterior">Exterior</button>
-    </nav>
+    <header class="main-header">
+      <div class="container header-container">
+        <div class="logo">
+          <img src="./logo-small.png" alt="Logo" />
+        </div>
+        <div class="nav-toggle" id="navToggle">
+          <i class="fas fa-bars"></i>
+        </div>
+        <nav class="main-nav" id="mainNav">
+          <ul class="nav-links">
+            <li><a href="./index.html" class="active">Home</a></li>
+            <li><a href="./pages/about.html">About</a></li>
+            <li><a href="./pages/contact.html">Contact</a></li>
+            <li><a href="./pages/faq.html">FAQ</a></li>
+            <li><a href="./pages/policy.html">Policy</a></li>
+            <li><a href="./pages/disclaimer.html">Disclaimer</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
 
-    <div class="container">
-      <!-- Blog Section: How to Use & Benefits -->
-      <div class="blog-section">
-        <h4>How to Use & Benefits</h4>
+    <section class="hero">
+      <div class="hero-content">
+        <h1>Paint Your World 500 Unique <span>Wall Paint colors</span></h1>
         <p>
-          Welcome to our Paint Visualizer—an innovative tool that allows you to
-          experiment with a variety of paint colors and preview how they will
-          transform your space in real time. Simply select a room from the
-          navbar, choose a color from the palette below, and watch the overlay
-          blend with the base image to give you a realistic view.
-        </p>
-        <p>
-          Benefits include an intuitive interface, responsive adjustments for
-          different devices, and the ability to explore and compare color
-          schemes effortlessly. Whether you’re redesigning your living room,
-          bedroom, or exterior, our tool helps you make informed design
-          decisions.
-        </p>
-        <p>
-          Start by selecting a room and then choose your paint color to see your
-          vision come to life.
+          Dive into our collection of 500 unique wall paint shades. Preview
+          colors live on your walls and pick the perfect code.
         </p>
       </div>
+    </section>
 
-      <!-- Main Layout for Visualizer -->
-      <div class="visualizer-layout">
-        <!-- Visualization Area (Enlarged and centered) -->
-        <div class="visualization-area">
-          <img src="" alt="Base" id="baseImage" />
-        </div>
-        <!-- Color Selection Panel -->
-        <div class="color-selection">
-          <h4>Paint Color</h4>
-          <!-- Mobile Menu Icon for Categories (visible only on mobile) -->
-          <div class="mobile-menu-icon" id="mobileMenuIcon">
-            &#9776; Categories
+    <section id="visualizer" class="visualizer-section">
+      <div class="container">
+        <h2 class="section-title">Paint Visualizer</h2>
+        <nav class="room-navbar">
+          <button class="room-button active" data-room="livingroom">
+            Livingroom
+          </button>
+          <button class="room-button" data-room="kitchen">Kitchen</button>
+          <button class="room-button" data-room="Bedroom">Bedroom</button>
+          <button class="room-button" data-room="Exterior">Exterior</button>
+        </nav>
+
+        <div class="visualizer-layout">
+          <div class="visualization-area">
+            <img src="/" alt="Base" id="baseImage" />
           </div>
-          <!-- Category Navigation (in mobile, toggled as an overlay) -->
-          <div class="color-categories" id="colorCategoriesContainer">
-            <span class="mobile-close-icon" id="mobileCloseIcon"
-              >&times; Close</span
-            >
-            <!-- Category buttons will be injected by JS -->
-          </div>
-          <!-- Color Options (buttons for individual colors) -->
-          <div class="color-options"></div>
-          <button class="reset-button" id="resetButton">Reset</button>
-          <!-- Color Details Panel -->
-          <div class="color-details" id="colorDetails">
-            <p id="colorRGB"></p>
-            <p id="colorHex"></p>
-            <p id="colorCategory"></p>
-            <p id="colorRoom"></p>
-            <div class="finish-selection"></div>
-            <p id="colorFinishDisplay"></p>
+          <div class="color-selection">
+            <h4>Paint Color</h4>
+            <div class="mobile-menu-icon" id="mobileMenuIcon">
+              &#9776; Categories
+            </div>
+            <div class="color-categories" id="colorCategoriesContainer">
+              <span class="mobile-close-icon" id="mobileCloseIcon"
+                >&times; Close</span
+              >
+            </div>
+            <div class="color-options"></div>
+            <button class="reset-button" id="resetButton">Reset</button>
+            <div class="color-details" id="colorDetails">
+              <p id="colorRGB"></p>
+              <p id="colorHex"></p>
+              <p id="colorCategory"></p>
+              <p id="colorRoom"></p>
+              <div class="finish-selection"></div>
+            </div>
           </div>
         </div>
       </div>
+    </section>
+    <div class="blog-section">
+      <h4>How to Use & Benefits</h4>
+      <p>
+        Welcome to our Paint Visualizer Wall Paint an innovative tool that
+        allows you to experiment with a variety of paint colors and preview how
+        they will transform your space in real time. Simply select a room from
+        the navbar, choose a color from the palette below, and watch the overlay
+        blend with the base image to give you a realistic view.
+      </p>
+      <p>
+        Benefits include an intuitive interface, responsive adjustments for
+        different devices, and the ability to explore and compare color schemes
+        effortlessly. Whether you're redesigning your living room, bedroom, or
+        exterior, our tool helps you make informed design decisions.
+      </p>
+      <p>
+        Start by selecting a room and then choose your paint color to see your
+        vision come to life.
+      </p>
     </div>
+    <footer class="main-footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-column">
+            <h3>Wall Paint</h3>
+            <p>
+              Your digital solution for visualizing paint colors in any space.
+              Try it !
+            </p>
+            <div class="social-icons"></div>
+          </div>
+          <div class="footer-column">
+            <h3>Quick Links</h3>
+            <ul class="footer-links">
+              <li><a href="#">Home</a></li>
+              <li><a href="./pages/about.html">About Us</a></li>
+              <li><a href="./pages/contact.html">Contact Us</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Support</h3>
+            <ul class="footer-links">
+              <li><a href="./pages/faq.html">FAQ</a></li>
+              <li><a href="./pages/policy.html">Policy</a></li>
+              <li><a href="./pages/disclaimer.html">Disclaimer</a></li>
+            </ul>
+          </div>
+          <div class="footer-column"></div>
+        </div>
+        <div class="copyright">
+          <p>&copy; 2025 Wall Paint. All rights reserved.</p>
+          <p>Version 1.0.0</p>
+        </div>
+      </div>
+    </footer>
 
-    <!-- Application Logic -->
     <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        // Configuration for each room/visualizer category
-        const visualizerConfigs = {
-          livingroom: {
-            baseImage: "./images-livingroom/base.jpg",
-            overlayPath: "./images-livingroom/",
-          },
-          kitchen: {
-            baseImage: "./images-kitchen/base.jpg",
-            overlayPath: "./images-kitchen/",
-          },
-          Bedroom: {
-            baseImage: "./images-bedroom/base.jpg",
-            overlayPath: "./images-bedroom/",
-          },
-          Exterior: {
-            baseImage: "./images-exterior/base.jpg",
-            overlayPath: "./images-exterior/",
-          },
-        };
+      document.addEventListener("DOMContentLoaded", function () {
+        const navToggle = document.getElementById("navToggle");
+        const mainNav = document.getElementById("mainNav");
 
-        // DOM elements
-        const baseImage = document.getElementById("baseImage");
-        const visualizationArea = document.querySelector(".visualization-area");
-        const colorOptionsContainer = document.querySelector(".color-options");
-        const resetButton = document.getElementById("resetButton");
-        const mobileMenuIcon = document.getElementById("mobileMenuIcon");
-        const colorCategoriesContainer = document.getElementById(
-          "colorCategoriesContainer"
-        );
-        const roomButtons = document.querySelectorAll(".room-button");
-
-        // Global variables
-        let currentColor = null;
-        let currentConfig = null;
-        let currentRoom = null;
-        let overlays = {}; // to hold overlay image elements
-
-        /* Helper: Convert "rgb(r, g, b)" string to an HSL object */
-        function rgbToHsl(r, g, b) {
-          r /= 255;
-          g /= 255;
-          b /= 255;
-          const max = Math.max(r, g, b),
-            min = Math.min(r, g, b);
-          let h,
-            s,
-            l = (max + min) / 2;
-          if (max === min) {
-            h = s = 0;
-          } else {
-            const d = max - min;
-            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-            switch (max) {
-              case r:
-                h = (g - b) / d + (g < b ? 6 : 0);
-                break;
-              case g:
-                h = (b - r) / d + 2;
-                break;
-              case b:
-                h = (r - g) / d + 4;
-                break;
-            }
-            h *= 60;
-          }
-          return { h, s, l };
-        }
-
-        /* Helper: Convert "rgb(r, g, b)" to Hex string */
-        function rgbStringToHex(rgbStr) {
-          const regex = /rgb\(\s*(\d+),\s*(\d+),\s*(\d+)\s*\)/;
-          const result = regex.exec(rgbStr);
-          if (!result) return "#000000";
-          const r = parseInt(result[1]).toString(16).padStart(2, "0");
-          const g = parseInt(result[2]).toString(16).padStart(2, "0");
-          const b = parseInt(result[3]).toString(16).padStart(2, "0");
-          return `#${r}${g}${b}`;
-        }
-
-        /* Determine a category for a given RGB string */
-        function getColorCategory(rgbStr) {
-          const regex = /rgb\(\s*(\d+),\s*(\d+),\s*(\d+)\s*\)/;
-          const result = regex.exec(rgbStr);
-          if (!result) return "Neutral";
-          const r = parseInt(result[1]);
-          const g = parseInt(result[2]);
-          const b = parseInt(result[3]);
-          const { h, s, l } = rgbToHsl(r, g, b);
-          if (s < 0.1 || l < 0.15 || l > 0.85) {
-            return "Neutral";
-          }
-          if (h < 15 || h >= 345) {
-            return "Red";
-          } else if (h < 45) {
-            return l < 0.5 ? "Brown" : "Orange";
-          } else if (h < 75) {
-            return "Yellow";
-          } else if (h < 165) {
-            return "Green";
-          } else if (h < 255) {
-            return "Blue";
-          } else if (h < 345) {
-            return "Purple";
-          }
-          return "Neutral";
-        }
-
-        /* Group color keys into 8 categories */
-        function buildColorCategories() {
-          const categories = {
-            Red: [],
-            Brown: [],
-            Orange: [],
-            Yellow: [],
-            Green: [],
-            Blue: [],
-            Purple: [],
-            Neutral: [],
-          };
-          for (let key in colors) {
-            const cat = getColorCategory(colors[key]);
-            if (categories[cat]) {
-              categories[cat].push(key);
-            }
-          }
-          return categories;
-        }
-
-        const colorCategories = buildColorCategories();
-
-        /* Render category buttons */
-        function renderCategoryButtons(colorCategories) {
-          colorCategoriesContainer.innerHTML =
-            '<span class="mobile-close-icon" id="mobileCloseIcon">&times; Close</span>';
-          Object.keys(colorCategories).forEach((category) => {
-            const btn = document.createElement("button");
-            btn.className = "category-button";
-            btn.dataset.category = category;
-            btn.textContent = category;
-            colorCategoriesContainer.appendChild(btn);
-          });
-          const mobileCloseIconNew = document.getElementById("mobileCloseIcon");
-          mobileCloseIconNew.addEventListener("click", () => {
-            colorCategoriesContainer.classList.remove("active");
-          });
-        }
-
-        /* Render color buttons for the selected category */
-        function renderColorButtons(category, colorCategories) {
-          colorOptionsContainer.innerHTML = "";
-          const colorKeys = colorCategories[category];
-          if (!colorKeys) return;
-          colorKeys.sort((a, b) => Number(a) - Number(b));
-          colorKeys.forEach((key) => {
-            const colorItem = document.createElement("div");
-            colorItem.className = "color-item";
-            const button = document.createElement("button");
-            button.className = "color-button";
-            button.dataset.color = key;
-            button.style.backgroundColor = colors[key];
-            button.setAttribute("aria-label", "Color");
-            colorItem.appendChild(button);
-            colorOptionsContainer.appendChild(colorItem);
-            button.addEventListener("click", () => {
-              if (currentColor !== key) {
-                selectColor(key);
-              }
-            });
-          });
-        }
-
-        /* Setup event listeners on category buttons */
-        function setupCategoryButtonListeners(colorCategories) {
-          const buttons = document.querySelectorAll(".category-button");
-          buttons.forEach((btn) => {
-            btn.addEventListener("click", () => {
-              buttons.forEach((b) => b.classList.remove("active"));
-              btn.classList.add("active");
-              const category = btn.dataset.category;
-              renderColorButtons(category, colorCategories);
-              selectColor(null);
-              if (colorCategoriesContainer.classList.contains("active")) {
-                colorCategoriesContainer.classList.remove("active");
-              }
-            });
-          });
-        }
-
-        /* Update color details in the preview panel */
-        function updateColorDetails(colorId) {
-          const colorRGBEl = document.getElementById("colorRGB");
-          const colorHexEl = document.getElementById("colorHex");
-          const colorCategoryEl = document.getElementById("colorCategory");
-          const colorRoomEl = document.getElementById("colorRoom");
-          const colorFinishDisplayEl =
-            document.getElementById("colorFinishDisplay");
-
-          if (colorId) {
-            const rgbValue = colors[colorId];
-            const hexValue = rgbStringToHex(rgbValue);
-            const category = getColorCategory(rgbValue);
-            const room =
-              currentRoom.charAt(0).toUpperCase() + currentRoom.slice(1);
-
-            colorRGBEl.textContent = `RGB: ${rgbValue}`;
-            colorHexEl.textContent = `Hex: ${hexValue}`;
-            colorCategoryEl.textContent = `Color Category: ${category}`;
-            colorRoomEl.textContent = `Room: ${room}`;
-            // Assume 'finish' is defined elsewhere or set default here
-            colorFinishDisplayEl.textContent = `Finish: Matte`;
-          } else {
-            colorRGBEl.textContent = "";
-            colorHexEl.textContent = "";
-            colorCategoryEl.textContent = "";
-            colorRoomEl.textContent = "";
-            colorFinishDisplayEl.textContent = "";
-          }
-        }
-
-        /* When a color button is clicked, show its overlay and update details */
-        function selectColor(colorId) {
-          if (colorId === currentColor) {
-            return;
-          }
-          Object.values(overlays).forEach(
-            (overlay) => (overlay.style.opacity = "0")
-          );
-          document
-            .querySelectorAll(".color-button")
-            .forEach((button) => button.classList.remove("active"));
-
-          if (colorId) {
-            let overlay;
-            if (overlays[colorId]) {
-              overlay = overlays[colorId];
-            } else {
-              overlay = document.createElement("img");
-              overlay.src = `${currentConfig.overlayPath}${colorId}.jpg`;
-              overlay.alt = "Overlay";
-              overlay.className = "color-overlay";
-              overlay.style.opacity = "0";
-              visualizationArea.appendChild(overlay);
-              overlays[colorId] = overlay;
-            }
-            overlay.style.opacity = "1";
-            const button = document.querySelector(`[data-color="${colorId}"]`);
-            if (button) button.classList.add("active");
-            currentColor = colorId;
-            updateColorDetails(colorId);
-          } else {
-            currentColor = null;
-            updateColorDetails(null);
-          }
-        }
-
-        resetButton.addEventListener("click", () => {
-          selectColor(null);
+        navToggle.addEventListener("click", function () {
+          mainNav.classList.toggle("show");
         });
-
-        mobileMenuIcon.addEventListener("click", () => {
-          colorCategoriesContainer.classList.add("active");
-        });
-
-        document.addEventListener("change", () => {
-          if (currentColor) {
-            updateColorDetails(currentColor);
-          }
-        });
-
-        function initializeVisualizer(config) {
-          Object.values(overlays).forEach((overlay) => overlay.remove());
-          overlays = {};
-          currentColor = null;
-          baseImage.src = config.baseImage;
-          const defaultCategory = "Red";
-          const catButtons = document.querySelectorAll(".category-button");
-          catButtons.forEach((btn) => {
-            btn.classList.toggle(
-              "active",
-              btn.dataset.category === defaultCategory
-            );
-          });
-          renderColorButtons(defaultCategory, colorCategories);
-          updateColorDetails(null);
-        }
-
-        // Setup room navbar event listeners
-        roomButtons.forEach((btn) => {
-          btn.addEventListener("click", () => {
-            roomButtons.forEach((b) => b.classList.remove("active"));
-            btn.classList.add("active");
-            currentRoom = btn.dataset.room;
-            currentConfig = visualizerConfigs[currentRoom];
-            initializeVisualizer(currentConfig);
-          });
-        });
-
-        // Set default room as Livingroom
-        const defaultRoomButton = document.querySelector(
-          '.room-button[data-room="livingroom"]'
-        );
-        if (defaultRoomButton) {
-          defaultRoomButton.classList.add("active");
-          currentRoom = defaultRoomButton.dataset.room;
-          currentConfig = visualizerConfigs[currentRoom];
-        }
-        initializeVisualizer(currentConfig);
-        renderCategoryButtons(colorCategories);
-        setupCategoryButtonListeners(colorCategories);
       });
     </script>
-    <!-- Colors data file remains the same -->
+
+    <script src="./index.js"></script>
     <script src="./colors.js"></script>
   </body>
 </html>
