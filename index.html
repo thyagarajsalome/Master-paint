@@ -7,28 +7,9 @@
       content="SffIdJrNUgctC2BGUo-WAG4Cd8olaW40WE_W9kqKJ5I"
     />
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wall Paint</title>
-
-    <meta
-      name="description"
-      content="Discover premium wall paint solutions at wallpaint.in…"
-    />
-    <meta name="keywords" content="wall paint, interior paint, color trends…" />
-    <meta name="author" content="wallpaint.in" />
-
-    <link rel="manifest" href="manifest.json" />
-    <meta name="theme-color" content="#ff7043" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-    <meta name="apple-mobile-web-app-title" content="WallPaint" />
-    <link rel="apple-touch-icon" href="/icons/icon-152x152.png" />
-
-    <link rel="canonical" href="https://wallpaint.in/this-page-slug.html" />
-    <meta name="robots" content="index, follow" />
-
-    <link rel="stylesheet" href="./css/normalize.css" />
-    <link rel="stylesheet" href="/style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Paint Visualizer</title>
+    <!-- If the actual URL is: https://toolwebsite.in/paint.html?source=adwords -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -36,132 +17,75 @@
   </head>
 
   <body>
-    <header class="main-header">
-      <div class="container header-container">
-        <div class="logo">
-          <img src="./logo-small.png" alt="Logo" />
-        </div>
-        <div class="nav-toggle" id="navToggle">
-          <i class="fas fa-bars"></i>
-        </div>
-        <nav class="main-nav" id="mainNav">
-          <ul class="nav-links">
-            <li><a href="./index.html" class="active">Home</a></li>
-            <li><a href="./pages/about.html">About</a></li>
-            <li><a href="./pages/contact.html">Contact</a></li>
-            <li><a href="./pages/faq.html">FAQ</a></li>
-            <li><a href="./pages/policy.html">Policy</a></li>
-            <li><a href="./pages/disclaimer.html">Disclaimer</a></li>
-          </ul>
-        </nav>
-      </div>
-    </header>
+    <!-- Room Navbar -->
+    <nav class="room-navbar">
+      <button class="room-button" data-room="livingroom">Livingroom</button>
+      <button class="room-button" data-room="kitchen">Kitchen</button>
+      <button class="room-button" data-room="Bedroom">Bedroom</button>
+      <button class="room-button" data-room="Exterior">Exterior</button>
+    </nav>
 
-    <section class="hero">
-      <div class="hero-content">
-        <h1>Paint Your World 500 Unique <span>Wall Paint colors</span></h1>
+    <div class="container">
+      <!-- Blog Section: How to Use & Benefits -->
+      <div class="blog-section">
+        <h4>How to Use & Benefits</h4>
         <p>
-          Dive into our collection of 500 unique wall paint shades. Preview
-          colors live on your walls and pick the perfect code.
+          Welcome to our Paint Visualizer—an innovative tool that allows you to
+          experiment with a variety of paint colors and preview how they will
+          transform your space in real time. Simply select a room from the
+          navbar, choose a color from the palette below, and watch the overlay
+          blend with the base image to give you a realistic view.
+        </p>
+        <p>
+          Benefits include an intuitive interface, responsive adjustments for
+          different devices, and the ability to explore and compare color
+          schemes effortlessly. Whether you’re redesigning your living room,
+          bedroom, or exterior, our tool helps you make informed design
+          decisions.
+        </p>
+        <p>
+          Start by selecting a room and then choose your paint color to see your
+          vision come to life.
         </p>
       </div>
-    </section>
 
-    <section id="visualizer" class="visualizer-section">
-      <div class="container">
-        <h2 class="section-title">Paint Visualizer</h2>
-        <nav class="room-navbar">
-          <button class="room-button active" data-room="livingroom">
-            Livingroom
-          </button>
-          <button class="room-button" data-room="kitchen">Kitchen</button>
-          <button class="room-button" data-room="Bedroom">Bedroom</button>
-          <button class="room-button" data-room="Exterior">Exterior</button>
-        </nav>
-
-        <div class="visualizer-layout">
-          <div class="visualization-area">
-            <img src="/" alt="Base" id="baseImage" />
+      <!-- Main Layout for Visualizer -->
+      <div class="visualizer-layout">
+        <!-- Visualization Area (Enlarged and centered) -->
+        <div class="visualization-area">
+          <img src="" alt="Base" id="baseImage" />
+        </div>
+        <!-- Color Selection Panel -->
+        <div class="color-selection">
+          <h4>Paint Color</h4>
+          <!-- Mobile Menu Icon for Categories (visible only on mobile) -->
+          <div class="mobile-menu-icon" id="mobileMenuIcon">
+            &#9776; Categories
           </div>
-          <div class="color-selection">
-            <h4>Paint Color</h4>
-            <div class="mobile-menu-icon" id="mobileMenuIcon">
-              &#9776; Categories
-            </div>
-            <div class="color-categories" id="colorCategoriesContainer">
-              <span class="mobile-close-icon" id="mobileCloseIcon"
-                >&times; Close</span
-              >
-            </div>
-            <div class="color-options"></div>
-            <button class="reset-button" id="resetButton">Reset</button>
-            <div class="color-details" id="colorDetails">
-              <p id="colorRGB"></p>
-              <p id="colorHex"></p>
-              <p id="colorCategory"></p>
-              <p id="colorRoom"></p>
-              <div class="finish-selection"></div>
-            </div>
+          <!-- Category Navigation (in mobile, toggled as an overlay) -->
+          <div class="color-categories" id="colorCategoriesContainer">
+            <span class="mobile-close-icon" id="mobileCloseIcon"
+              >&times; Close</span
+            >
+            <!-- Category buttons will be injected by JS -->
+          </div>
+          <!-- Color Options (buttons for individual colors) -->
+          <div class="color-options"></div>
+          <button class="reset-button" id="resetButton">Reset</button>
+          <!-- Color Details Panel -->
+          <div class="color-details" id="colorDetails">
+            <p id="colorRGB"></p>
+            <p id="colorHex"></p>
+            <p id="colorCategory"></p>
+            <p id="colorRoom"></p>
+            <div class="finish-selection"></div>
+            <p id="colorFinishDisplay"></p>
           </div>
         </div>
       </div>
-    </section>
-    <div class="blog-section">
-      <h4>How to Use & Benefits</h4>
-      <p>
-        Welcome to our Paint Visualizer Wall Paint an innovative tool that
-        allows you to experiment with a variety of paint colors and preview how
-        they will transform your space in real time. Simply select a room from
-        the navbar, choose a color from the palette below, and watch the overlay
-        blend with the base image to give you a realistic view.
-      </p>
-      <p>
-        Benefits include an intuitive interface, responsive adjustments for
-        different devices, and the ability to explore and compare color schemes
-        effortlessly. Whether you're redesigning your living room, bedroom, or
-        exterior, our tool helps you make informed design decisions.
-      </p>
-      <p>
-        Start by selecting a room and then choose your paint color to see your
-        vision come to life.
-      </p>
     </div>
-    <footer class="main-footer">
-      <div class="container">
-        <div class="footer-content">
-          <div class="footer-column">
-            <h3>Wall Paint</h3>
-            <p>
-              Your digital solution for visualizing paint colors in any space.
-              Try it !
-            </p>
-            <div class="social-icons"></div>
-          </div>
-          <div class="footer-column">
-            <h3>Quick Links</h3>
-            <ul class="footer-links">
-              <li><a href="#">Home</a></li>
-              <li><a href="./pages/about.html">About Us</a></li>
-              <li><a href="./pages/contact.html">Contact Us</a></li>
-            </ul>
-          </div>
-          <div class="footer-column">
-            <h3>Support</h3>
-            <ul class="footer-links">
-              <li><a href="./pages/faq.html">FAQ</a></li>
-              <li><a href="./pages/policy.html">Policy</a></li>
-              <li><a href="./pages/disclaimer.html">Disclaimer</a></li>
-            </ul>
-          </div>
-          <div class="footer-column"></div>
-        </div>
-        <div class="copyright">
-          <p>&copy; 2025 Wall Paint. All rights reserved.</p>
-          <p>Version 1.0.0</p>
-        </div>
-      </div>
-    </footer>
 
+    <!-- Application Logic -->
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const navToggle = document.getElementById("navToggle");

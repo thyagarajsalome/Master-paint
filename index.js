@@ -320,6 +320,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupCategoryButtonListeners(colorCategories);
   initializeVisualizer(currentConfig); // Initialize with the default config
 });
+<<<<<<< HEAD
 
 // Register Service Worker
 if ("serviceWorker" in navigator) {
@@ -337,3 +338,5 @@ if ("serviceWorker" in navigator) {
     );
   });
 }
+=======
+>>>>>>> df562f575e1cc30771397dda9c0f15a5f74ba80c
