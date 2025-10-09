@@ -10,7 +10,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Wall Paint</title>
 
-    <!-- SEO Meta Tags -->
     <meta
       name="description"
       content="Discover premium wall paint solutions at wallpaint.in…"
@@ -18,14 +17,12 @@
     <meta name="keywords" content="wall paint, interior paint, color trends…" />
     <meta name="author" content="wallpaint.in" />
 
-    <!-- Self-referencing canonical -->
-    <!-- Example in plain HTML if you know the URL: -->
     <link rel="canonical" href="https://wallpaint.in/this-page-slug.html" />
-    <!-- Or generate dynamically in your server-side code -->
 
     <meta name="robots" content="index, follow" />
 
-    <!-- Stylesheets & Icons -->
+    <link rel="manifest" href="/manifest.json" />
+
     <link rel="stylesheet" href="./css/normalize.css" />
     <link rel="stylesheet" href="./css/style.css" />
     <link
@@ -35,11 +32,10 @@
   </head>
 
   <body>
-    <!-- Main Navigation -->
     <header class="main-header">
       <div class="container header-container">
         <div class="logo">
-          <img src="./logo-small.png" alt="Logo" />
+          <img src="./icons/logo-brand-wallpaint.png" alt="Logo" />
         </div>
         <div class="nav-toggle" id="navToggle">
           <i class="fas fa-bars"></i>
@@ -57,7 +53,6 @@
       </div>
     </header>
 
-    <!-- Hero Section -->
     <section class="hero">
       <div class="hero-content">
         <h1>Paint Your World 500 Unique <span>Wall Paint colors</span></h1>
@@ -68,7 +63,6 @@
       </div>
     </section>
 
-    <!-- Room Navbar -->
     <section id="visualizer" class="visualizer-section">
       <div class="container">
         <h2 class="section-title">Paint Visualizer</h2>
@@ -81,29 +75,22 @@
           <button class="room-button" data-room="Exterior">Exterior</button>
         </nav>
 
-        <!-- Main Layout for Visualizer -->
         <div class="visualizer-layout">
-          <!-- Visualization Area (Enlarged and centered) -->
           <div class="visualization-area">
             <img src="/" alt="Base" id="baseImage" />
           </div>
-          <!-- Color Selection Panel -->
           <div class="color-selection">
             <h4>Paint Color</h4>
-            <!-- Mobile Menu Icon for Categories (visible only on mobile) -->
             <div class="mobile-menu-icon" id="mobileMenuIcon">
               &#9776; Categories
             </div>
-            <!-- Category Navigation (in mobile, toggled as an overlay) -->
             <div class="color-categories" id="colorCategoriesContainer">
               <span class="mobile-close-icon" id="mobileCloseIcon"
                 >&times; Close</span
               >
             </div>
-            <!-- Color Options (buttons for individual colors) -->
             <div class="color-options"></div>
             <button class="reset-button" id="resetButton">Reset</button>
-            <!-- Color Details Panel -->
             <div class="color-details" id="colorDetails">
               <p id="colorRGB"></p>
               <p id="colorHex"></p>
@@ -115,7 +102,6 @@
         </div>
       </div>
     </section>
-    <!-- Blog Section: How to Use & Benefits -->
     <div class="blog-section">
       <h4>How to Use & Benefits</h4>
       <p>
@@ -136,7 +122,6 @@
         vision come to life.
       </p>
     </div>
-    <!-- Footer Section -->
     <footer class="main-footer">
       <div class="container">
         <div class="footer-content">
@@ -146,12 +131,7 @@
               Your digital solution for visualizing paint colors in any space.
               Try it !
             </p>
-            <div class="social-icons">
-              <!-- <a href="#"><i class="fab fa-facebook"></i></a> -->
-              <!-- <a href="#"><i class="fab fa-twitter"></i></a>
-              <a href="#"><i class="fab fa-instagram"></i></a>
-              <a href="#"><i class="fab fa-pinterest"></i></a> -->
-            </div>
+            <div class="social-icons"></div>
           </div>
           <div class="footer-column">
             <h3>Quick Links</h3>
@@ -178,8 +158,6 @@
       </div>
     </footer>
 
-    <!-- Application Logic -->
-
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const navToggle = document.getElementById("navToggle");
@@ -193,5 +171,23 @@
 
     <script src="./index.js"></script>
     <script src="./colors.js"></script>
+
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/sw.js")
+            .then((registration) => {
+              console.log(
+                "ServiceWorker registration successful with scope: ",
+                registration.scope
+              );
+            })
+            .catch((err) => {
+              console.log("ServiceWorker registration failed: ", err);
+            });
+        });
+      }
+    </script>
   </body>
 </html>

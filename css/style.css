@@ -37,7 +37,7 @@ ul {
 /* ========= Header & Navigation ========= */
 .main-header {
   background-color: #111;
-  padding: 1rem 0;
+
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
   position: sticky;
   top: 0;
@@ -61,7 +61,7 @@ ul {
 }
 
 .logo img {
-  width: 60%;
+  width: 50%;
   height: auto;
   display: block;
 }
@@ -215,7 +215,7 @@ ul {
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 0.5rem;
 }
 
 /* Revised Layout: Stack the visualization area and the color selection */
