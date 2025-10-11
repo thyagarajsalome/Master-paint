@@ -92,23 +92,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const b = parseInt(result[3]);
     const { h, s, l } = rgbToHsl(r, g, b);
 
-    // Grays, blacks, and whites are neutrals
-    if (s < 0.15 || l < 0.1 || l > 0.9) {
+    if (s < 0.1 || l < 0.1 || l > 0.9) {
       return "Neutral";
     }
 
-    if (h >= 0 && h < 15) return "Red";
-    if (h >= 15 && h < 45) {
-      // Distinguish between brown and orange based on lightness
-      return l < 0.6 ? "Brown" : "Orange";
-    }
+    if (h >= 345 || h < 15) return "Red";
+    if (h >= 15 && h < 45) return "Orange";
     if (h >= 45 && h < 70) return "Yellow";
     if (h >= 70 && h < 160) return "Green";
     if (h >= 160 && h < 260) return "Blue";
-    if (h >= 260 && h < 340) return "Purple";
-    if (h >= 340 && h <= 360) return "Red";
+    if (h >= 260 && h < 345) return "Purple";
 
-    return "Neutral"; // Fallback
+    return "Neutral";
   }
 
   /* Group color keys into categories */
@@ -151,7 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
 
     categoryOrder.forEach((category) => {
-      if (colorCategories[category]) {
+      if (colorCategories[category] && colorCategories[category].length > 0) {
         const btn = document.createElement("button");
         btn.className = "category-button";
         btn.dataset.category = category;
@@ -274,12 +269,6 @@ document.addEventListener("DOMContentLoaded", () => {
     colorCategoriesContainer.classList.add("active");
   });
 
-  document.addEventListener("change", () => {
-    if (currentColor) {
-      updateColorDetails(currentColor);
-    }
-  });
-
   function initializeVisualizer(config) {
     Object.values(overlays).forEach((overlay) => overlay.remove());
     overlays = {};
@@ -287,9 +276,20 @@ document.addEventListener("DOMContentLoaded", () => {
     baseImage.src = config.baseImage;
     const defaultCategory = "Red";
     const catButtons = document.querySelectorAll(".category-button");
+    let defaultButton = null;
     catButtons.forEach((btn) => {
-      btn.classList.toggle("active", btn.dataset.category === defaultCategory);
+      if (btn.dataset.category === defaultCategory) {
+        defaultButton = btn;
+      }
+      btn.classList.remove("active");
     });
+    if (defaultButton) {
+      defaultButton.classList.add("active");
+    } else if (catButtons.length > 0) {
+      catButtons[0].classList.add("active");
+      renderColorButtons(catButtons[0].dataset.category, colorCategories);
+    }
+
     renderColorButtons(defaultCategory, colorCategories);
     updateColorDetails(null);
   }
@@ -310,13 +310,11 @@ document.addEventListener("DOMContentLoaded", () => {
     '.room-button[data-room="livingroom"]'
   );
   if (defaultRoomButton) {
-    defaultRoomButton.classList.add("active");
-    currentRoom = defaultRoomButton.dataset.room;
-    currentConfig = visualizerConfigs[currentRoom];
+    defaultRoomButton.click();
   }
 
   // Initial setup
   renderCategoryButtons(colorCategories);
   setupCategoryButtonListeners(colorCategories);
-  initializeVisualizer(currentConfig); // Initialize with the default config
+  initializeVisualizer(visualizerConfigs.livingroom); // Initialize with the default config
 });
