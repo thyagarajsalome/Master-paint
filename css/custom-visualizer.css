@@ -4,8 +4,21 @@
 
 .content {
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* Mobile-first: controls below canvas */
   gap: 20px;
+}
+
+.canvas-area {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #262626;
+  border-radius: 12px;
+  position: relative;
+  min-height: 40vh; /* Adjust height for mobile */
+  border: 1px solid #333;
+  overflow: hidden;
 }
 
 .sidebar {
@@ -14,6 +27,19 @@
   display: flex;
   flex-direction: column;
   gap: 15px;
+}
+
+/* Tablet and larger screens */
+@media (min-width: 769px) {
+  .content {
+    flex-direction: row; /* Side-by-side layout for larger screens */
+  }
+  .sidebar {
+    width: 320px;
+  }
+  .canvas-area {
+    min-height: 60vh; /* Taller canvas on larger screens */
+  }
 }
 
 .section {
@@ -162,19 +188,6 @@ input[type="color"] {
   border-color: #ff7043;
 }
 
-.canvas-area {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #262626;
-  border-radius: 12px;
-  position: relative;
-  min-height: 40vh;
-  border: 1px solid #333;
-  overflow: hidden;
-}
-
 #canvasContainer {
   position: relative;
   display: none;
@@ -215,21 +228,4 @@ canvas {
   font-size: 0.9em;
   margin-top: 10px;
   border-left: 4px solid #ff7043;
-}
-
-/* Mobile-first layout */
-@media (max-width: 768px) {
-  .content {
-    flex-direction: column-reverse;
-  }
-}
-
-/* Tablet and larger screens */
-@media (min-width: 769px) {
-  .content {
-    flex-direction: row;
-  }
-  .sidebar {
-    width: 320px;
-  }
 }
