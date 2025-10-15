@@ -1,21 +1,50 @@
+const CACHE_NAME = "wall-paint-cache-v2";
 const urlsToCache = [
   "/",
-  "/index.html",
-  "/css/style.css",
-  "/css/normalize.css",
-  "/index.js",
-  "/colors.js",
-  "/logo-small.png",
-  "/images-livingroom/base.jpg",
-  "/images-kitchen/base.jpg",
-  "/images-bedroom/base.jpg",
-  "/images-exterior/base.jpg",
-  "/pages/about.html",
-  "/pages/contact.html",
-  "/pages/faq.html",
-  "/pages/policy.html",
-  "/pages/disclaimer.html",
-  "/icons/icon-192x192.png", // Changed to absolute path
-  "/icons/icon-512x512.png", // Changed to absolute path
-  "/manifest.json", // Changed to absolute path
+  "./index.html",
+  "./custom.html", // Added new page
+  "./css/style.css",
+  "./css/custom-visualizer.css", // Added new CSS
+  "./js/main.js",
+  "./js/custom-visualizer.js", // Added new JS
+  "./colors.js",
+  "./icons/icon-192x192.png",
+  "./icons/icon-512x512.png",
+  // Add other important assets like logo, etc.
+  "./icons/logo-brand-wallpaint.png",
 ];
+
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      console.log("Opened cache");
+      return cache.addAll(urlsToCache);
+    })
+  );
+});
+
+self.addEventListener("fetch", (event) => {
+  event.respondWith(
+    caches.match(event.request).then((response) => {
+      if (response) {
+        return response;
+      }
+      return fetch(event.request);
+    })
+  );
+});
+
+self.addEventListener("activate", (event) => {
+  const cacheWhitelist = [CACHE_NAME];
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (cacheWhitelist.indexOf(cacheName) === -1) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+});
