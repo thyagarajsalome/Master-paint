@@ -3,9 +3,12 @@ const CACHE_NAME = "wall-paint-v1";
 const urlsToCache = [
   "/",
   "/index.html",
+  "./custom.html",
+  "./custome-visualizer.css",
   "/css/style.css",
   "/css/normalize.css",
   "/index.js",
+  "custom-visualizer.js",
   "/colors.js",
   "/logo-small.png",
   "/images-livingroom/base.jpg",
