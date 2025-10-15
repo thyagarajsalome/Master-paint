@@ -764,3 +764,33 @@ ul {
     margin: 0;
   }
 }
+
+/* Visualizer Choice Section */
+.visualizer-choices {
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.choice-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.choice-btn {
+  padding: 1rem 2rem;
+  border: 2px solid #ff7043;
+  background-color: transparent;
+  color: #ff7043;
+  font-size: 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.choice-btn:hover {
+  background-color: #ff7043;
+  color: #fff;
+}
