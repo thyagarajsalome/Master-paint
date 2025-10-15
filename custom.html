@@ -37,6 +37,18 @@
     <div class="container custom-visualizer-container">
       <h2 class="section-title">Custom Paint Visualizer</h2>
       <div class="content">
+        <div class="canvas-area" id="canvasArea">
+          <div class="placeholder" id="placeholder">
+            <div class="placeholder-icon">🏠</div>
+            <h2>Upload a photo to start</h2>
+          </div>
+          <div id="canvasContainer">
+            <canvas id="mainCanvas"></canvas>
+            <canvas id="overlayCanvas"></canvas>
+            <div class="brush-cursor" id="brushCursor"></div>
+          </div>
+        </div>
+
         <div class="sidebar">
           <div class="section">
             <h3>1. Upload Image</h3>
@@ -125,18 +137,6 @@
             <button class="btn btn-success" id="saveBtn" disabled>
               Download Image
             </button>
-          </div>
-        </div>
-
-        <div class="canvas-area" id="canvasArea">
-          <div class="placeholder" id="placeholder">
-            <div class="placeholder-icon">🏠</div>
-            <h2>Upload a photo to start</h2>
-          </div>
-          <div id="canvasContainer">
-            <canvas id="mainCanvas"></canvas>
-            <canvas id="overlayCanvas"></canvas>
-            <div class="brush-cursor" id="brushCursor"></div>
           </div>
         </div>
       </div>
