@@ -5,8 +5,8 @@
   --accent-color: #667eea;
   --accent-dark: #5568d3;
   --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --border-color: #dee2e6;
-  --light-border: #e9ecef;
+  --border-color: #373737;
+  --light-border: #a1a1a1;
   --btn-danger: #dc3545;
   --btn-danger-hover: #c82333;
   --btn-success: #28a745;
@@ -16,7 +16,7 @@
   --btn-secondary: #6c757d;
   --btn-secondary-hover: #5a6268;
   --placeholder-color: #6c757d;
-  --info-bg: #e7f3ff;
+  --info-bg: #5e5e5f;
 }
 
 /* Reset */
@@ -199,7 +199,7 @@ input[type="file"] {
   transition: all 0.3s ease;
   font-weight: 500;
   text-align: left;
-  color: var(--border-color);
+  color: #fff;
 }
 
 .tool-btn:hover:not(.active) {
