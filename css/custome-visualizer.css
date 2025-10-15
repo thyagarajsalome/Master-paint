@@ -46,6 +46,7 @@ body {
 
 .header {
   background: var(--accent-gradient);
+  border-radius: 1rem;
   color: var(--bg-color);
   padding: 20px;
   text-align: center;
@@ -54,11 +55,13 @@ body {
 .header h1 {
   font-size: 1.8em;
   margin-bottom: 5px;
+  color: #dee2e6;
 }
 
 .header p {
   opacity: 0.9;
   font-size: 1em;
+  color: #dee2e6;
 }
 
 .content {

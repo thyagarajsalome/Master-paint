@@ -579,7 +579,7 @@ ul {
     width: 100%;
   }
   .room-navbar {
-    text-align: center;
+    text-align: start;
   }
   .mobile-menu-icon {
     display: block;
@@ -763,6 +763,33 @@ ul {
 }
 
 /* Tablet and up: Side by side layout */
+@media (min-width: 768px) {
+  .visualizer-layout {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .visualization-area {
+    flex: 2;
+    max-width: 70%;
+  }
+
+  .color-selection {
+    flex: 1;
+    max-width: 30%;
+    margin: 0;
+  }
+}
+/* Mobile First Approach */
+.visualization-area {
+  width: 100%;
+}
+
+.color-selection {
+  width: 100%;
+}
+
+/* Tablet and up */
 @media (min-width: 768px) {
   .visualizer-layout {
     flex-direction: row;
