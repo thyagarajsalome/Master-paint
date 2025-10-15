@@ -217,7 +217,15 @@ canvas {
   border-left: 4px solid #ff7043;
 }
 
-@media (min-width: 1024px) {
+/* Mobile-first layout */
+@media (max-width: 768px) {
+  .content {
+    flex-direction: column-reverse;
+  }
+}
+
+/* Tablet and larger screens */
+@media (min-width: 769px) {
   .content {
     flex-direction: row;
   }
