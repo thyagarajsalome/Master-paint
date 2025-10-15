@@ -205,10 +205,27 @@ ul {
   transition: background-color 0.2s ease;
   margin: 0.25rem;
 }
-.room-button.active,
+
+.custom-paint {
+  padding: 0.5rem 1rem;
+  border: 1px solid gray;
+  color: #111;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin: 0.25rem;
+  background-color: #e0e0e0;
+}
+
+.custom-paint:hover {
+  background-color: #e0e0e0;
+  color: #111;
+}
+
 .room-button:hover {
-  background-color: #ff7043;
-  border-color: #ff7043;
+  background-color: #e0e0e0;
+  color: #111;
 }
 
 /* Main Container */
