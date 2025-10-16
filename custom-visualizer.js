@@ -1,489 +1,315 @@
-const mainCanvas = document.getElementById("mainCanvas");
-const overlayCanvas = document.getElementById("overlayCanvas");
-const mainCtx = mainCanvas.getContext("2d", { willReadFrequently: true });
-const overlayCtx = overlayCanvas.getContext("2d");
-const canvasContainer = document.getElementById("canvasContainer");
-const canvasArea = document.getElementById("canvasArea");
-const brushCursor = document.getElementById("brushCursor");
-const fileInput = document.getElementById("fileInput");
-const uploadArea = document.getElementById("uploadArea");
-const placeholder = document.getElementById("placeholder");
-const colorPicker = document.getElementById("colorPicker");
-const colorValue = document.getElementById("colorValue");
-const brushSize = document.getElementById("brushSize");
-const brushValue = document.getElementById("brushValue");
-const vertexInfo = document.getElementById("vertexInfo");
-const brushTools = document.getElementById("brushTools");
-// ADDED: A reference to the upload section to hide it
-const uploadSection = document.getElementById("uploadSection");
+document.addEventListener("DOMContentLoaded", () => {
+  const imageUpload = document.getElementById("image-upload");
+  const uploadBox = document.getElementById("upload-box");
+  const canvasBox = document.getElementById("canvas-box");
+  const toolsPanel = document.getElementById("tools-panel");
 
-let originalImage = null;
-let currentImage = null;
-let selectionMask = null;
-let currentTool = "polygon";
-let isDrawing = false;
-let polygonPoints = [];
+  const baseCanvas = document.getElementById("base-canvas");
+  const paintCanvas = document.getElementById("paint-canvas");
+  const baseCtx = baseCanvas.getContext("2d");
+  const paintCtx = paintCanvas.getContext("2d");
 
-// Tool buttons
-const polygonBtn = document.getElementById("polygonBtn");
-const addBtn = document.getElementById("addBtn");
-const eraseBtn = document.getElementById("eraseBtn");
-const clearBtn = document.getElementById("clearBtn");
-const clearPaintBtn = document.getElementById("clearPaintBtn");
-const applyBtn = document.getElementById("applyBtn");
-const saveBtn = document.getElementById("saveBtn");
-const resetImageBtn = document.getElementById("resetImageBtn");
+  const colorPicker = document.getElementById("color-picker");
+  const brushSizeSlider = document.getElementById("brush-size");
+  const brushSizeValue = document.getElementById("brush-size-value");
+  const toleranceSlider = document.getElementById("tolerance");
+  const toleranceValue = document.getElementById("tolerance-value");
 
-// --- UPLOAD HANDLERS ---
-uploadArea.addEventListener("click", () => fileInput.click());
-uploadArea.addEventListener("dragover", (e) => {
-  e.preventDefault();
-  uploadArea.classList.add("dragover");
-});
-uploadArea.addEventListener("dragleave", () =>
-  uploadArea.classList.remove("dragover")
-);
-uploadArea.addEventListener("drop", (e) => {
-  e.preventDefault();
-  uploadArea.classList.remove("dragover");
-  const file = e.dataTransfer.files[0];
-  if (file && file.type.startsWith("image/")) loadImage(file);
-});
-fileInput.addEventListener("change", (e) => {
-  const file = e.target.files[0];
-  if (file) loadImage(file);
-});
+  const brushSizeSliderWrapper = document.getElementById("brush-size-slider");
+  const toleranceSliderWrapper = document.getElementById("tolerance-slider");
 
-function loadImage(file) {
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    const img = new Image();
-    img.onload = () => {
-      const rect = canvasArea.getBoundingClientRect();
-      const maxWidth = rect.width - 20;
-      const maxHeight = rect.height - 20;
-      let width = img.width;
-      let height = img.height;
-      const ratio = Math.min(maxWidth / width, maxHeight / height);
-      width = Math.floor(width * ratio);
-      height = Math.floor(height * ratio);
+  const toolButtons = document.querySelectorAll(".tool-button");
 
-      mainCanvas.width = overlayCanvas.width = width;
-      mainCanvas.height = overlayCanvas.height = height;
+  const downloadButton = document.getElementById("download-button");
+  const resetButton = document.getElementById("reset-button");
+  const newImageButton = document.getElementById("new-image-button");
 
-      mainCtx.drawImage(img, 0, 0, width, height);
+  const popularColorsContainer = document.getElementById("popular-colors");
+  const toaster = document.getElementById("toaster");
 
-      originalImage = mainCtx.getImageData(0, 0, width, height);
-      currentImage = mainCtx.getImageData(0, 0, width, height);
-      selectionMask = new Uint8Array(width * height);
+  let isDrawing = false;
+  let activeTool = "brush";
+  let brushSize = 30;
+  let tolerance = 20;
+  let selectedColor = "#4ECDC4";
+  let originalImageData = null;
 
-      placeholder.style.display = "none";
-      canvasContainer.style.display = "block";
-      enableTools();
-      // ADDED: Hide the upload section to save space
-      uploadSection.style.display = "none";
+  const popularColors = [
+    { name: "Coral Red", value: "#FF6B6B" },
+    { name: "Ocean Blue", value: "#4ECDC4" },
+    { name: "Sunset Orange", value: "#FF8C42" },
+    { name: "Forest Green", value: "#95E1D3" },
+    { name: "Lavender", value: "#C7CEEA" },
+    { name: "Sunshine Yellow", value: "#FFE66D" },
+    { name: "Rose Pink", value: "#FF6B9D" },
+    { name: "Sky Blue", value: "#A8E6CF" },
+  ];
+
+  popularColors.forEach((color) => {
+    const button = document.createElement("button");
+    button.className = "popular-color";
+    button.style.backgroundColor = color.value;
+    button.title = color.name;
+    button.addEventListener("click", () => {
+      selectedColor = color.value;
+      colorPicker.value = color.value;
+    });
+    popularColorsContainer.appendChild(button);
+  });
+
+  function showToast(message) {
+    const toast = document.createElement("div");
+    toast.className = "toast";
+    toast.textContent = message;
+    toaster.appendChild(toast);
+    setTimeout(() => {
+      toast.remove();
+    }, 3000);
+  }
+
+  imageUpload.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          const maxWidth = 800;
+          const maxHeight = 600;
+          let { width, height } = img;
+
+          if (width > maxWidth) {
+            height *= maxWidth / width;
+            width = maxWidth;
+          }
+          if (height > maxHeight) {
+            width *= maxHeight / height;
+            height = maxHeight;
+          }
+
+          baseCanvas.width = width;
+          baseCanvas.height = height;
+          paintCanvas.width = width;
+          paintCanvas.height = height;
+
+          baseCtx.drawImage(img, 0, 0, width, height);
+          originalImageData = baseCtx.getImageData(0, 0, width, height);
+
+          uploadBox.style.display = "none";
+          canvasBox.style.display = "flex";
+          toolsPanel.style.display = "block";
+
+          showToast("Image uploaded! Start painting!");
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  toolButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      toolButtons.forEach((btn) => btn.classList.remove("active"));
+      button.classList.add("active");
+      activeTool = button.dataset.tool;
+
+      brushSizeSliderWrapper.style.display =
+        activeTool === "brush" ? "block" : "none";
+      toleranceSliderWrapper.style.display =
+        activeTool === "select" || activeTool === "deselect" ? "block" : "none";
+    });
+  });
+
+  colorPicker.addEventListener(
+    "input",
+    (e) => (selectedColor = e.target.value)
+  );
+  brushSizeSlider.addEventListener("input", (e) => {
+    brushSize = e.target.value;
+    brushSizeValue.textContent = brushSize;
+  });
+  toleranceSlider.addEventListener("input", (e) => {
+    tolerance = e.target.value;
+    toleranceValue.textContent = tolerance;
+  });
+
+  const getCanvasCoordinates = (e) => {
+    const rect = paintCanvas.getBoundingClientRect();
+    const clientX = e.type.startsWith("touch")
+      ? e.touches[0].clientX
+      : e.clientX;
+    const clientY = e.type.startsWith("touch")
+      ? e.touches[0].clientY
+      : e.clientY;
+    return {
+      x: (clientX - rect.left) * (paintCanvas.width / rect.width),
+      y: (clientY - rect.top) * (paintCanvas.height / rect.height),
     };
-    img.src = e.target.result;
   };
-  reader.readAsDataURL(file);
-}
 
-function enableTools() {
-  [
-    polygonBtn,
-    addBtn,
-    eraseBtn,
-    clearBtn,
-    clearPaintBtn,
-    applyBtn,
-    saveBtn,
-    resetImageBtn,
-  ].forEach((btn) => (btn.disabled = false));
-  setTool("polygon"); // Default tool
-}
-
-// --- TOOL SELECTION ---
-polygonBtn.addEventListener("click", () => setTool("polygon"));
-addBtn.addEventListener("click", () => setTool("add"));
-eraseBtn.addEventListener("click", () => setTool("erase"));
-
-function setTool(tool) {
-  currentTool = tool;
-  [polygonBtn, addBtn, eraseBtn].forEach((btn) =>
-    btn.classList.remove("active")
-  );
-
-  vertexInfo.style.display = "none";
-  brushTools.style.display = "none";
-  mainCanvas.style.cursor = "crosshair";
-
-  if (tool === "polygon") {
-    polygonBtn.classList.add("active");
-    vertexInfo.style.display = "block";
-  } else if (tool === "add" || tool === "erase") {
-    (tool === "add" ? addBtn : eraseBtn).classList.add("active");
-    brushTools.style.display = "block";
-  }
-}
-
-// --- CANVAS INTERACTION ---
-const getCanvasCoords = (e) => {
-  const event = e.touches ? e.touches[0] : e;
-  const rect = mainCanvas.getBoundingClientRect();
-  const scaleX = mainCanvas.width / rect.width;
-  const scaleY = mainCanvas.height / rect.height;
-  return {
-    x: Math.floor((event.clientX - rect.left) * scaleX),
-    y: Math.floor((event.clientY - rect.top) * scaleY),
-  };
-};
-
-function handleCanvasDown(e) {
-  const { x, y } = getCanvasCoords(e);
-  if (currentTool === "polygon") {
-    polygonPoints.push({ x, y });
-    drawPolygon();
-  } else {
-    // add or erase
+  const startDrawing = (e) => {
+    if (activeTool !== "brush") return;
     isDrawing = true;
-    brushSelect(x, y);
-  }
-}
+    draw(e);
+  };
 
-function handleCanvasMove(e) {
-  e.preventDefault(); // Prevent scrolling on touch
-  const coords = getCanvasCoords(e);
-  const rect = mainCanvas.getBoundingClientRect();
-  const clientX = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-  const clientY = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+  const stopDrawing = () => {
+    isDrawing = false;
+    paintCtx.beginPath();
+  };
+  const hexToRgb = (hex) => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result
+      ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16),
+        }
+      : null;
+  };
 
-  if (currentTool === "add" || currentTool === "erase") {
-    const size = parseInt(brushSize.value);
-    const scale = rect.width / mainCanvas.width;
-    brushCursor.style.width = brushCursor.style.height =
-      size * 2 * scale + "px";
-    brushCursor.style.left = clientX + "px";
-    brushCursor.style.top = clientY + "px";
-    brushCursor.style.display = "block";
-    if (isDrawing) {
-      brushSelect(coords.x, coords.y);
-    }
-  } else {
-    brushCursor.style.display = "none";
-  }
+  const draw = (e) => {
+    if (!isDrawing || activeTool !== "brush") return;
+    const { x, y } = getCanvasCoordinates(e);
 
-  if (currentTool === "polygon" && polygonPoints.length > 0) {
-    drawPolygon(coords.x, coords.y);
-  }
-}
+    const radius = brushSize / 2;
+    const startX = Math.max(0, Math.floor(x - radius));
+    const startY = Math.max(0, Math.floor(y - radius));
+    const endX = Math.min(paintCanvas.width, Math.ceil(x + radius));
+    const endY = Math.min(paintCanvas.height, Math.ceil(y + radius));
+    const paintColorRGB = hexToRgb(selectedColor);
 
-function handleCanvasUp() {
-  isDrawing = false;
-}
-
-function handleDoubleClick() {
-  if (currentTool === "polygon" && polygonPoints.length >= 3) {
-    completePolygon();
-  }
-}
-
-// Mouse events
-mainCanvas.addEventListener("mousedown", handleCanvasDown);
-mainCanvas.addEventListener("mousemove", handleCanvasMove);
-mainCanvas.addEventListener("mouseup", handleCanvasUp);
-mainCanvas.addEventListener("mouseleave", () => {
-  isDrawing = false;
-  brushCursor.style.display = "none";
-});
-mainCanvas.addEventListener("dblclick", handleDoubleClick);
-
-// Touch events
-mainCanvas.addEventListener("touchstart", (e) => {
-  e.preventDefault();
-  handleCanvasDown(e);
-});
-mainCanvas.addEventListener("touchmove", handleCanvasMove);
-mainCanvas.addEventListener("touchend", (e) => {
-  e.preventDefault();
-  handleCanvasUp(e);
-});
-
-// --- SELECTION ALGORITHMS ---
-function drawPolygon(previewX, previewY) {
-  overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
-  if (polygonPoints.length === 0) return;
-
-  overlayCtx.strokeStyle = "#667eea";
-  overlayCtx.lineWidth = 3;
-  overlayCtx.fillStyle = "rgba(102, 126, 234, 0.2)";
-
-  overlayCtx.beginPath();
-  overlayCtx.moveTo(polygonPoints[0].x, polygonPoints[0].y);
-  for (let i = 1; i < polygonPoints.length; i++) {
-    overlayCtx.lineTo(polygonPoints[i].x, polygonPoints[i].y);
-  }
-  if (previewX !== undefined) overlayCtx.lineTo(previewX, previewY);
-
-  if (polygonPoints.length >= 3) {
-    overlayCtx.closePath();
-    overlayCtx.fill();
-  }
-
-  overlayCtx.stroke();
-  polygonPoints.forEach((p) => {
-    overlayCtx.fillStyle = "#667eea";
-    overlayCtx.beginPath();
-    overlayCtx.arc(p.x, p.y, 5, 0, 2 * Math.PI);
-    overlayCtx.fill();
-  });
-}
-
-function completePolygon() {
-  if (polygonPoints.length < 3) return;
-  const w = mainCanvas.width,
-    h = mainCanvas.height;
-  for (let y = 0; y < h; y++) {
-    for (let x = 0; x < w; x++) {
-      if (isPointInPolygon(x, y, polygonPoints)) {
-        selectionMask[y * w + x] = 1;
-      }
-    }
-  }
-  polygonPoints = [];
-  overlayCtx.clearRect(0, 0, w, h);
-  showSelection();
-}
-
-function isPointInPolygon(x, y, polygon) {
-  let inside = false;
-  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-    const xi = polygon[i].x,
-      yi = polygon[i].y;
-    const xj = polygon[j].x,
-      yj = polygon[j].y;
-    if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi)
-      inside = !inside;
-  }
-  return inside;
-}
-
-function brushSelect(x, y) {
-  const size = parseInt(brushSize.value);
-  const w = mainCanvas.width,
-    h = mainCanvas.height;
-  const value = currentTool === "add" ? 1 : 0;
-  for (let dy = -size; dy <= size; dy++) {
-    for (let dx = -size; dx <= size; dx++) {
-      if (dx * dx + dy * dy <= size * size) {
-        const nx = x + dx,
-          ny = y + dy;
-        if (nx >= 0 && nx < w && ny >= 0 && ny < h)
-          selectionMask[ny * w + nx] = value;
-      }
-    }
-  }
-  showSelection();
-}
-
-function showSelection() {
-  const w = mainCanvas.width,
-    h = mainCanvas.height;
-  const imageData = overlayCtx.createImageData(w, h);
-  for (let i = 0; i < selectionMask.length; i++) {
-    if (selectionMask[i] === 1) {
-      const idx = i * 4;
-      imageData.data[idx] = 102;
-      imageData.data[idx + 1] = 126;
-      imageData.data[idx + 2] = 234;
-      imageData.data[idx + 3] = 128;
-    }
-  }
-  overlayCtx.clearRect(0, 0, w, h);
-  overlayCtx.putImageData(imageData, 0, 0);
-}
-
-// --- BUTTON ACTIONS ---
-function clearSelection() {
-  selectionMask.fill(0);
-  overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
-  polygonPoints = [];
-}
-clearBtn.addEventListener("click", clearSelection);
-
-// Function to revert the image to its original state
-function revertToOriginal() {
-  if (originalImage) {
-    currentImage = new ImageData(
-      new Uint8ClampedArray(originalImage.data),
-      originalImage.width,
-      originalImage.height
+    const paintedImageData = paintCtx.getImageData(
+      startX,
+      startY,
+      endX - startX,
+      endY - startY
     );
-    mainCtx.putImageData(originalImage, 0, 0);
-  }
-}
+    const paintedData = paintedImageData.data;
+    const originalPortion = baseCtx.getImageData(
+      startX,
+      startY,
+      endX - startX,
+      endY - startY
+    ).data;
 
-resetImageBtn.addEventListener("click", () => {
-  revertToOriginal();
-  clearSelection();
-});
+    for (let i = 0; i < paintedData.length; i += 4) {
+      const localX = startX + ((i / 4) % (endX - startX));
+      const localY = startY + Math.floor(i / 4 / (endX - startX));
 
-// New Event Listener for Clear Paint button
-clearPaintBtn.addEventListener("click", () => {
-  revertToOriginal();
-});
-
-// ✨ --- APPLY PAINT WITH ACCURATE COLOR MATCHING --- ✨
-applyBtn.addEventListener("click", () => {
-  const targetColor = hexToRgb(colorPicker.value);
-  const targetHsl = rgbToHsl(targetColor.r, targetColor.g, targetColor.b);
-
-  const newImageData = new ImageData(
-    new Uint8ClampedArray(currentImage.data),
-    currentImage.width,
-    currentImage.height
-  );
-
-  for (let i = 0; i < selectionMask.length; i++) {
-    if (selectionMask[i] === 1) {
-      const idx = i * 4;
-
-      // Get original pixel colors
-      const originalR = currentImage.data[idx];
-      const originalG = currentImage.data[idx + 1];
-      const originalB = currentImage.data[idx + 2];
-
-      // Convert original color to HSL to preserve lightness
-      const originalHsl = rgbToHsl(originalR, originalG, originalB);
-
-      // Use the target color's Hue and Saturation, but preserve original Lightness
-      // Apply a subtle saturation adjustment to maintain texture
-      const newH = targetHsl[0];
-      const newS = targetHsl[1] * 0.85; // Slightly reduce saturation for more natural look
-      const newL = originalHsl[2]; // Preserve original lightness for texture
-
-      // Convert back to RGB
-      const newRgb = hslToRgb(newH, newS, newL);
-
-      // Update image data
-      newImageData.data[idx] = newRgb[0];
-      newImageData.data[idx + 1] = newRgb[1];
-      newImageData.data[idx + 2] = newRgb[2];
-      newImageData.data[idx + 3] = 255; // Keep alpha at 100%
+      if (
+        Math.sqrt(Math.pow(localX - x, 2) + Math.pow(localY - y, 2)) <= radius
+      ) {
+        const gray =
+          0.299 * originalPortion[i] +
+          0.587 * originalPortion[i + 1] +
+          0.114 * originalPortion[i + 2];
+        paintedData[i] = (paintColorRGB.r / 255) * gray;
+        paintedData[i + 1] = (paintColorRGB.g / 255) * gray;
+        paintedData[i + 2] = (paintColorRGB.b / 255) * gray;
+        paintedData[i + 3] = 255;
+      }
     }
-  }
-  currentImage = newImageData;
-  mainCtx.putImageData(currentImage, 0, 0);
-  clearSelection(); // Clear selection overlay after applying paint
-});
+    paintCtx.putImageData(paintedImageData, startX, startY);
+  };
+  const floodFill = (startX, startY, deselect = false) => {
+    if (!originalImageData) return;
+    const { width, height } = paintCanvas;
+    const originalData = originalImageData.data;
+    const currentPaintData = paintCtx.getImageData(0, 0, width, height);
+    const dataToModify = currentPaintData.data;
 
-saveBtn.addEventListener("click", () => {
-  const link = document.createElement("a");
-  link.download = "painted-room.png";
-  link.href = mainCanvas.toDataURL();
-  link.click();
-});
+    const startIdx = (startY * width + startX) * 4;
+    const [startR, startG, startB] = [
+      originalData[startIdx],
+      originalData[startIdx + 1],
+      originalData[startIdx + 2],
+    ];
 
-// --- COLOR UTILITIES ---
-colorPicker.addEventListener("input", (e) => {
-  const color = e.target.value.toUpperCase();
-  colorValue.value = color;
-  updateSelectedPreset(color);
-});
-colorValue.addEventListener("change", (e) => {
-  const value = e.target.value;
-  if (/^#[0-9A-F]{6}$/i.test(value)) {
-    colorPicker.value = value;
-    updateSelectedPreset(value);
-  }
-});
-document.querySelectorAll(".preset-color").forEach((preset) => {
-  preset.addEventListener("click", () => {
-    const color = preset.dataset.color;
-    colorPicker.value = color;
-    colorValue.value = color;
-    updateSelectedPreset(color);
+    const queue = [[startX, startY]];
+    const visited = new Uint8Array(width * height);
+    const paintColorRGB = hexToRgb(selectedColor);
+
+    while (queue.length > 0) {
+      const [x, y] = queue.shift();
+      const idx = y * width + x;
+      if (x < 0 || x >= width || y < 0 || y >= height || visited[idx]) continue;
+
+      const dataIdx = idx * 4;
+      const [r, g, b] = [
+        originalData[dataIdx],
+        originalData[dataIdx + 1],
+        originalData[dataIdx + 2],
+      ];
+      const colorDiff = Math.sqrt(
+        Math.pow(r - startR, 2) +
+          Math.pow(g - startG, 2) +
+          Math.pow(b - startB, 2)
+      );
+
+      if (colorDiff <= tolerance) {
+        visited[idx] = 1;
+        if (deselect) {
+          dataToModify.set([0, 0, 0, 0], dataIdx);
+        } else {
+          const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+          dataToModify.set(
+            [
+              (paintColorRGB.r / 255) * gray,
+              (paintColorRGB.g / 255) * gray,
+              (paintColorRGB.b / 255) * gray,
+              255,
+            ],
+            dataIdx
+          );
+        }
+        queue.push([x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]);
+      }
+    }
+    paintCtx.putImageData(currentPaintData, 0, 0);
+  };
+
+  const handleClick = (e) => {
+    if (activeTool !== "select" && activeTool !== "deselect") return;
+    const { x, y } = getCanvasCoordinates(e);
+    floodFill(Math.round(x), Math.round(y), activeTool === "deselect");
+  };
+
+  paintCanvas.addEventListener("mousedown", startDrawing);
+  paintCanvas.addEventListener("mouseup", stopDrawing);
+  paintCanvas.addEventListener("mousemove", draw);
+  paintCanvas.addEventListener("mouseleave", stopDrawing);
+  paintCanvas.addEventListener("touchstart", startDrawing);
+  paintCanvas.addEventListener("touchend", stopDrawing);
+  paintCanvas.addEventListener("touchmove", draw);
+  paintCanvas.addEventListener("click", handleClick);
+
+  downloadButton.addEventListener("click", () => {
+    const finalCanvas = document.createElement("canvas");
+    finalCanvas.width = baseCanvas.width;
+    finalCanvas.height = baseCanvas.height;
+    const finalCtx = finalCanvas.getContext("2d");
+    finalCtx.drawImage(baseCanvas, 0, 0);
+    finalCtx.drawImage(paintCanvas, 0, 0);
+
+    const link = document.createElement("a");
+    link.download = "painted-image.png";
+    link.href = finalCanvas.toDataURL();
+    link.click();
+    showToast("Download started!");
+  });
+
+  resetButton.addEventListener("click", () => {
+    paintCtx.clearRect(0, 0, paintCanvas.width, paintCanvas.height);
+    showToast("Paint cleared!");
+  });
+
+  newImageButton.addEventListener("click", () => {
+    uploadBox.style.display = "flex";
+    canvasBox.style.display = "none";
+    toolsPanel.style.display = "none";
+    imageUpload.value = "";
+    baseCtx.clearRect(0, 0, baseCanvas.width, baseCanvas.height);
+    paintCtx.clearRect(0, 0, paintCanvas.width, paintCanvas.height);
   });
 });
-
-function updateSelectedPreset(color) {
-  document
-    .querySelectorAll(".preset-color")
-    .forEach((p) => p.classList.remove("selected"));
-  const matchingPreset = document.querySelector(
-    `.preset-color[data-color="${color.toUpperCase()}"]`
-  );
-  if (matchingPreset) matchingPreset.classList.add("selected");
-}
-
-function hexToRgb(hex) {
-  const r = parseInt(hex.slice(1, 3), 16),
-    g = parseInt(hex.slice(3, 5), 16),
-    b = parseInt(hex.slice(5, 7), 16);
-  return { r, g, b };
-}
-
-/**
- * Converts an RGB color value to HSL.
- */
-function rgbToHsl(r, g, b) {
-  (r /= 255), (g /= 255), (b /= 255);
-  let max = Math.max(r, g, b),
-    min = Math.min(r, g, b);
-  let h,
-    s,
-    l = (max + min) / 2;
-
-  if (max == min) {
-    h = s = 0; // achromatic
-  } else {
-    let d = max - min;
-    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-    switch (max) {
-      case r:
-        h = (g - b) / d + (g < b ? 6 : 0);
-        break;
-      case g:
-        h = (b - r) / d + 2;
-        break;
-      case b:
-        h = (r - g) / d + 4;
-        break;
-    }
-    h /= 6;
-  }
-  return [h, s, l];
-}
-
-/**
- * Converts an HSL color value to RGB.
- */
-function hslToRgb(h, s, l) {
-  let r, g, b;
-
-  if (s == 0) {
-    r = g = b = l; // achromatic
-  } else {
-    function hue2rgb(p, q, t) {
-      if (t < 0) t += 1;
-      if (t > 1) t -= 1;
-      if (t < 1 / 6) return p + (q - p) * 6 * t;
-      if (t < 1 / 2) return q;
-      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-      return p;
-    }
-
-    let q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-    let p = 2 * l - q;
-    r = hue2rgb(p, q, h + 1 / 3);
-    g = hue2rgb(p, q, h);
-    b = hue2rgb(p, q, h - 1 / 3);
-  }
-
-  return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
-}
-
-// --- SLIDER VALUE UPDATES ---
-brushSize.addEventListener(
-  "input",
-  (e) => (brushValue.textContent = e.target.value)
-);
