@@ -21,6 +21,9 @@
           Transform your space with a splash of color! Upload, paint, and
           download your vision ✨
         </p>
+        <button id="start-quiz-button" class="button">
+          Color Personality Quiz
+        </button>
       </div>
 
       <div class="main-content">
@@ -84,8 +87,6 @@
               value="30"
             />
           </div>
-          <!-- color-wand -->
-
           <div
             id="tolerance-slider"
             class="slider-wrapper"
@@ -103,6 +104,18 @@
               value="20"
             />
           </div>
+        </div>
+      </div>
+    </div>
+    <div id="quiz-overlay" class="quiz-overlay" style="display: none">
+      <div id="quiz-container" class="quiz-container">
+        <h2 id="quiz-title">Color Personality Quiz</h2>
+        <div id="quiz-questions"></div>
+        <div id="quiz-results" style="display: none">
+          <h3 id="result-title"></h3>
+          <p id="result-description"></p>
+          <div id="result-palette" class="popular-colors"></div>
+          <button id="close-quiz-button" class="button">Close</button>
         </div>
       </div>
     </div>

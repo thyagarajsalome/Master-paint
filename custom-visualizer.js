@@ -312,4 +312,165 @@ document.addEventListener("DOMContentLoaded", () => {
     baseCtx.clearRect(0, 0, baseCanvas.width, baseCanvas.height);
     paintCtx.clearRect(0, 0, paintCanvas.width, paintCanvas.height);
   });
+
+  // Quiz Functionality
+  const startQuizButton = document.getElementById("start-quiz-button");
+  const quizOverlay = document.getElementById("quiz-overlay");
+  const quizQuestions = document.getElementById("quiz-questions");
+  const quizResults = document.getElementById("quiz-results");
+  const resultTitle = document.getElementById("result-title");
+  const resultDescription = document.getElementById("result-description");
+  const resultPalette = document.getElementById("result-palette");
+  const closeQuizButton = document.getElementById("close-quiz-button");
+
+  let currentQuestionIndex = 0;
+  let personalityScores = {
+    bold: 0,
+    calm: 0,
+    creative: 0,
+    classic: 0,
+  };
+
+  const quizData = [
+    {
+      question: "What's your ideal weekend?",
+      answers: [
+        { text: "A wild night out", personality: "bold" },
+        { text: "A cozy day in with a book", personality: "calm" },
+        { text: "Exploring an art museum", personality: "creative" },
+        { text: "A dinner party with friends", personality: "classic" },
+      ],
+    },
+    {
+      question: "Choose a vacation destination:",
+      answers: [
+        { text: "Tokyo", personality: "bold" },
+        { text: "The Swiss Alps", personality: "calm" },
+        { text: "Barcelona", personality: "creative" },
+        { text: "Paris", personality: "classic" },
+      ],
+    },
+    {
+      question: "What's your go-to movie genre?",
+      answers: [
+        { text: "Action", personality: "bold" },
+        { text: "Documentary", personality: "calm" },
+        { text: "Indie film", personality: "creative" },
+        { text: "Drama", personality: "classic" },
+      ],
+    },
+  ];
+
+  const colorPersonalities = {
+    bold: {
+      title: "Bold & Beautiful",
+      description:
+        "You're not afraid to make a statement. These vibrant and energetic colors will match your dynamic personality.",
+      palette: [
+        { name: "Fiery Red", value: "#FF4136" },
+        { name: "Electric Blue", value: "#0074D9" },
+        { name: "Sunny Yellow", value: "#FFDC00" },
+        { name: "Hot Pink", value: "#F012BE" },
+      ],
+    },
+    calm: {
+      title: "Calm & Collected",
+      description:
+        "You appreciate peace and tranquility. These soothing and gentle hues will create a serene atmosphere in your space.",
+      palette: [
+        { name: "Seafoam Green", value: "#A8E6CF" },
+        { name: "Sky Blue", value: "#87CEEB" },
+        { name: "Lavender", value: "#E6E6FA" },
+        { name: "Soft Gray", value: "#D3D3D3" },
+      ],
+    },
+    creative: {
+      title: "Creative & Expressive",
+      description:
+        "You have a unique and artistic flair. This eclectic mix of colors will inspire your next masterpiece.",
+      palette: [
+        { name: "Deep Teal", value: "#008080" },
+        { name: "Mustard Yellow", value: "#FFDB58" },
+        { name: "Burnt Orange", value: "#CC5500" },
+        { name: "Plum Purple", value: "#DDA0DD" },
+      ],
+    },
+    classic: {
+      title: "Classic & Timeless",
+      description:
+        "You have a sophisticated and elegant taste. These timeless and versatile colors will never go out of style.",
+      palette: [
+        { name: "Navy Blue", value: "#000080" },
+        { name: "Cream", value: "#FFFDD0" },
+        { name: "Forest Green", value: "#228B22" },
+        { name: "Burgundy", value: "#800020" },
+      ],
+    },
+  };
+
+  startQuizButton.addEventListener("click", () => {
+    quizOverlay.style.display = "flex";
+    currentQuestionIndex = 0;
+    personalityScores = { bold: 0, calm: 0, creative: 0, classic: 0 };
+    quizQuestions.style.display = "block";
+    quizResults.style.display = "none";
+    displayQuestion();
+  });
+
+  closeQuizButton.addEventListener("click", () => {
+    quizOverlay.style.display = "none";
+  });
+
+  function displayQuestion() {
+    const questionData = quizData[currentQuestionIndex];
+    quizQuestions.innerHTML = `
+      <div class="question">
+        <h3>${questionData.question}</h3>
+        <div class="answers">
+          ${questionData.answers
+            .map(
+              (answer) =>
+                `<button class="answer" data-personality="${answer.personality}">${answer.text}</button>`
+            )
+            .join("")}
+        </div>
+      </div>
+    `;
+
+    document.querySelectorAll(".answer").forEach((button) => {
+      button.addEventListener("click", (e) => {
+        personalityScores[e.target.dataset.personality]++;
+        currentQuestionIndex++;
+        if (currentQuestionIndex < quizData.length) {
+          displayQuestion();
+        } else {
+          displayResults();
+        }
+      });
+    });
+  }
+
+  function displayResults() {
+    const dominantPersonality = Object.keys(personalityScores).reduce((a, b) =>
+      personalityScores[a] > personalityScores[b] ? a : b
+    );
+    const resultData = colorPersonalities[dominantPersonality];
+    quizQuestions.style.display = "none";
+    quizResults.style.display = "block";
+    resultTitle.textContent = resultData.title;
+    resultDescription.textContent = resultData.description;
+    resultPalette.innerHTML = "";
+    resultData.palette.forEach((color) => {
+      const button = document.createElement("button");
+      button.className = "popular-color";
+      button.style.backgroundColor = color.value;
+      button.title = color.name;
+      button.addEventListener("click", () => {
+        selectedColor = color.value;
+        colorPicker.value = color.value;
+        quizOverlay.style.display = "none";
+      });
+      resultPalette.appendChild(button);
+    });
+  }
 });
