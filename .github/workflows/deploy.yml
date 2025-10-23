@@ -1,0 +1,31 @@
+# Simple workflow to deploy static content to Hostinger via FTP
+name: Deploy static content to Hostinger
+
+on:
+  # Runs on pushes targeting the default branch (usually 'master' or 'main')
+  push:
+    branches: ["master"] # Or "main" if that's your default branch
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest # Use the latest Ubuntu runner
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4 # Action to checkout your repository code
+
+      - name: FTP Deploy
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }} # FTP server address from secrets
+          username: ${{ secrets.FTP_USERNAME }} # FTP username from secrets
+          password: ${{ secrets.FTP_PASSWORD }} # FTP password from secrets
+          # local-dir: ./ # Optional: Specify sub-directory if your site isn't in the root. Default is root.
+          # server-dir: public_html/ # Optional: Specify the target directory on the server. Default is root '/'. Adjust if needed (e.g., '/public_html/my-project/'). Check Hostinger's correct path.
+          # exclude: | # Optional: Add files/directories to exclude
+          #   **/.git*
+          #   **/.git*/**
+          #   **/node_modules/**
